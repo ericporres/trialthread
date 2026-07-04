@@ -6,3 +6,9 @@ node_modules/
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# internal ops docs — never public
+SESSION.md
+PROJECT.md
+PROJECT.md.bak-*
+LAUNCH-BAR.md
