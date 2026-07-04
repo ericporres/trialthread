@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "TrialThread — find clinical trials you'd never find on your own",
   description:
     "Describe a diagnosis in plain language. TrialThread searches clinicaltrials.gov, reads the eligibility criteria, and explains — in plain English — which recruiting trials may fit and why.",
-  robots: { index: false, follow: false }, // flip when Eric says launch
+  // Launched 2026-07-04: indexable.
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
