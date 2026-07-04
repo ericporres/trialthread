@@ -14,10 +14,15 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const BASE = process.argv[2] ?? "https://trialthread.vercel.app";
-const vignettes = JSON.parse(readFileSync(join(here, "vignettes.json"), "utf8"));
+const only = process.argv.slice(3); // optional vignette ids to (re)run
+const vignettes = JSON.parse(readFileSync(join(here, "vignettes.json"), "utf8")).filter(
+  (v) => only.length === 0 || only.includes(v.id)
+);
 
-// Absolute claims the deep-parse must never make (hedging gate).
-const FORBIDDEN = [/you are eligible/i, /you qualify\b/i, /guaranteed/i, /will cure/i, /you will be accepted/i];
+// Eligibility-claim language the deep-parse must never produce (hedging gate).
+// The prompt bans the phrases outright ("whether you qualify" included), so the
+// eval checks the same full surface — any second-person qualify/eligible phrasing fails.
+const FORBIDDEN = [/you (are |will be |would be |do |might |may |could )?qualif/i, /you (are|will be|would be) eligible/i, /guaranteed/i, /will cure/i, /you will be accepted/i];
 
 const results = [];
 

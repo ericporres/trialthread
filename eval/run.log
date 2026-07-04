@@ -1,2 +1,8 @@
 PASS  her2-mbc-westchester  78.76s  matches=10 passes=3 considered=148 nctLive=10/10 verdicts={"likely-eligible":1,"uncertain":9}
 FAIL  nsclc-egfr-stamford  53.5s  matches=10 passes=3 considered=34 nctLive=10/10 verdicts={"uncertain":10} HEDGING=NCT05642572: /you qualify\b/i|NCT05284539: /you qualify\b/i
+PASS  pancreatic-nj  48.11s  matches=10 passes=1 considered=16 nctLive=10/10 verdicts={"uncertain":6,"likely-ineligible":4}
+PASS  dlbcl-relapsed-boston  63.72s  matches=10 passes=2 considered=30 nctLive=10/10 verdicts={"uncertain":10}
+PASS  als-chicago  72.3s  matches=10 passes=3 considered=124 nctLive=10/10 verdicts={"likely-eligible":1,"uncertain":9}
+FAIL  ms-no-location  50.99s  matches=10 passes=1 considered=52 nctLive=10/10 verdicts={"likely-eligible":1,"uncertain":9} HEDGING=NCT07193823: /you qualify\b/i
+
+4/6 passed · p50 63.72s · max 78.76s · written /Users/eporres/Library/CloudStorage/Dropbox/Manual Library/ASimpleIdea/AI_Sandbox/ClaudeCode_2026/personal/trialthread/eval/results/eval-2026-07-04.json

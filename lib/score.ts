@@ -100,6 +100,7 @@ Hard rules:
 - concerns: criteria the patient may FAIL or that are UNKNOWN from their description. Unknowns phrased as what to check, not as failures.
 - questionsForDoctor: 2-3 specific, useful questions this person should ask their care team about this trial.
 - verdict: "likely-eligible" only when the major inclusion criteria are affirmatively matched and no stated exclusion applies. "uncertain" when key facts are missing. "likely-ineligible" when a stated fact appears to hit an exclusion — say which one, kindly.
+- Language rule: never write "you qualify," "you are eligible," or "you meet the criteria" in ANY construction, including questions and "whether you qualify" phrasings. Say "appears to match," "may fit," or "the study team decides eligibility" instead.
 
 Return ONLY JSON:
 {"nctId": string, "verdict": "likely-eligible"|"uncertain"|"likely-ineligible", "plainSummary": string (2 sentences: what the trial tests and for whom), "matchPoints": string[], "concerns": string[], "questionsForDoctor": string[]}`;
