@@ -1,61 +1,31 @@
 {
-  "date": "2026-07-04T18:08:03.469Z",
-  "base": "https://trialthread.vercel.app",
-  "passed": 2,
-  "total": 2,
-  "p50LatencyS": 61.7,
-  "maxLatencyS": 61.7,
+  "date": "2026-07-04T19:21:22.403Z",
+  "base": "https://www.trialthread.org",
+  "passed": 1,
+  "total": 1,
+  "p50LatencyS": 37.88,
+  "maxLatencyS": 37.88,
   "results": [
     {
-      "id": "her2-mbc-westchester",
+      "id": "pancreatic-nj",
       "ok": true,
-      "latencyS": 61.7,
-      "passes": 1,
-      "considered": 35,
-      "matches": 9,
+      "latencyS": 37.88,
+      "passes": 2,
+      "considered": 20,
+      "matches": 6,
       "verdicts": {
-        "uncertain": 8,
+        "uncertain": 5,
         "likely-ineligible": 1
       },
       "nctIds": [
-        "NCT03418961",
-        "NCT06435429",
-        "NCT06686394",
-        "NCT05748834",
-        "NCT05150691",
-        "NCT07007559",
-        "NCT05894239",
-        "NCT06625775",
-        "NCT07459673"
+        "NCT06850623",
+        "NCT06698458",
+        "NCT06673017",
+        "NCT06984562",
+        "NCT06861088",
+        "NCT04789486"
       ],
-      "nctLive": "9/9",
-      "hedgingViolations": [],
-      "errors": []
-    },
-    {
-      "id": "ms-no-location",
-      "ok": true,
-      "latencyS": 47.17,
-      "passes": 1,
-      "considered": 52,
-      "matches": 10,
-      "verdicts": {
-        "uncertain": 9,
-        "likely-ineligible": 1
-      },
-      "nctIds": [
-        "NCT04047628",
-        "NCT06267781",
-        "NCT03783416",
-        "NCT07318129",
-        "NCT05177523",
-        "NCT06611280",
-        "NCT06715436",
-        "NCT07376772",
-        "NCT05359653",
-        "NCT06629428"
-      ],
-      "nctLive": "10/10",
+      "nctLive": "6/6",
       "hedgingViolations": [],
       "errors": []
     }

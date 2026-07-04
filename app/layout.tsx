@@ -8,12 +8,36 @@ const sans = Public_Sans({ subsets: ["latin"], variable: "--font-sans", weight: 
 const serif = Newsreader({ subsets: ["latin"], variable: "--font-serif", weight: ["500", "600"] });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"] });
 
+const TITLE = "TrialThread — find clinical trials you'd never find on your own";
+const DESCRIPTION =
+  "Describe a diagnosis in plain language. TrialThread searches clinicaltrials.gov, reads the eligibility criteria, and explains — in plain English — which recruiting trials may fit and why. Free, no account, nothing you type is stored.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.trialthread.org"),
-  title: "TrialThread — find clinical trials you'd never find on your own",
-  description:
-    "Describe a diagnosis in plain language. TrialThread searches clinicaltrials.gov, reads the eligibility criteria, and explains — in plain English — which recruiting trials may fit and why.",
+  title: TITLE,
+  description: DESCRIPTION,
   // Launched 2026-07-04: indexable.
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "https://www.trialthread.org",
+    siteName: "TrialThread",
+    type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "TrialThread — Describe the diagnosis. We'll read the trials you'd never find on your own. Free, no account, nothing you type is stored, patients never pay.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

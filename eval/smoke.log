@@ -1,0 +1,3 @@
+PASS  pancreatic-nj  37.88s  matches=6 passes=2 considered=20 nctLive=6/6 verdicts={"uncertain":5,"likely-ineligible":1}
+
+1/1 passed · p50 37.88s · max 37.88s · written /Users/eporres/Library/CloudStorage/Dropbox/Manual Library/ASimpleIdea/AI_Sandbox/ClaudeCode_2026/personal/trialthread/eval/results/eval-2026-07-04.json
