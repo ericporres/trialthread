@@ -363,7 +363,16 @@ export default function Home() {
         an emergency, call your doctor or local emergency services.
       </div>
       <footer className="site">
-        <a href="/about">About — why this exists</a> · Data:{" "}
+        <a href="/about">About — why this exists</a> ·{" "}
+        {process.env.NEXT_PUBLIC_SPONSORS_URL && (
+          <>
+            <a href={process.env.NEXT_PUBLIC_SPONSORS_URL} target="_blank" rel="noreferrer">
+              Support TrialThread ♥
+            </a>{" "}
+            ·{" "}
+          </>
+        )}
+        Data:{" "}
         <a href="https://clinicaltrials.gov" target="_blank" rel="noreferrer">ClinicalTrials.gov</a>, fetched live ·
         No accounts, no stored health data · © {new Date().getFullYear()} TrialThread
       </footer>

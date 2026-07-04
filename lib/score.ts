@@ -103,7 +103,22 @@ Hard rules:
 - Language rule: never write "you qualify," "you are eligible," or "you meet the criteria" in ANY construction, including questions and "whether you qualify" phrasings. Say "appears to match," "may fit," or "the study team decides eligibility" instead.
 
 Return ONLY JSON:
-{"nctId": string, "verdict": "likely-eligible"|"uncertain"|"likely-ineligible", "plainSummary": string (2 sentences: what the trial tests and for whom), "matchPoints": string[], "concerns": string[], "questionsForDoctor": string[]}`;
+{"nctId": string, "verdict": "likely-eligible"|"uncertain"|"likely-ineligible", "plainSummary": string (2 sentences: what the trial tests and for whom), "matchPoints": string[], "concerns": string[], "questionsForDoctor": string[]}
+
+Worked example 1 — patient: 62-year-old man, stage IV colorectal cancer, KRAS G12C mutation, prior FOLFOX, lives near Denver. Trial requires: KRAS G12C-mutated advanced solid tumor, ≥1 prior systemic therapy, ECOG 0-1, no active brain metastases, adequate organ function.
+{"nctId": "NCT00000001", "verdict": "likely-eligible", "plainSummary": "This study tests a pill that targets the exact KRAS G12C mutation found in some colorectal cancers. It is for people whose cancer has spread and who have already tried at least one treatment.", "matchPoints": ["Requires a KRAS G12C mutation — you reported KRAS G12C.", "Requires at least one prior treatment — you received FOLFOX chemotherapy.", "Open to advanced solid tumors including colorectal cancer — matching your diagnosis."], "concerns": ["Requires good daily functioning (ECOG 0-1) — not stated in your description.", "Requires recent blood work showing adequate liver and kidney function — worth confirming.", "Excludes active brain metastases — your scans would need to confirm this."], "questionsForDoctor": ["Is my ECOG performance status 0 or 1?", "Are my liver and kidney labs recent enough to qualify for screening?"]}
+
+Worked example 2 — patient: 55-year-old woman, relapsed ovarian cancer, BRCA-negative, prior olaparib (a PARP inhibitor). Trial requires: platinum-sensitive recurrence, PARP inhibitor-naive.
+{"nctId": "NCT00000002", "verdict": "likely-ineligible", "plainSummary": "This study compares a new drug combination for ovarian cancer that has come back after responding to platinum chemotherapy. It is designed for people who have never taken a PARP inhibitor.", "matchPoints": ["For recurrent ovarian cancer — matching your diagnosis."], "concerns": ["The study excludes people who have already taken a PARP inhibitor — you reported prior olaparib, which is a PARP inhibitor. This appears to rule this trial out.", "If your recurrence was not platinum-sensitive, that would also be a barrier."], "questionsForDoctor": ["Given my prior olaparib, are there trials designed specifically for after PARP inhibitors?"]}
+
+Match that structure, tone, and honesty exactly.`;
+
+// Marked cacheable: this block now exceeds the 1024-token Sonnet caching minimum,
+// so all deep calls in a search (and across searches within the 5-min TTL under
+// traffic) read it at 0.1x price instead of paying full input cost every call.
+const DEEP_SYSTEM_BLOCKS = [
+  { type: "text" as const, text: DEEP_SYSTEM, cache_control: { type: "ephemeral" as const } },
+];
 
 export async function deepScore(
   profile: PatientProfile,
@@ -124,7 +139,7 @@ export async function deepScore(
     try {
       return await askJson<DeepScore>({
         model: MODELS.deep,
-        system: DEEP_SYSTEM,
+        system: DEEP_SYSTEM_BLOCKS,
         user: `PATIENT\n${profileSummary(profile)}\n\nTRIAL ${t.nctId}: ${t.title}
 Phase: ${t.phases.join(", ") || "N/A"}
 Conditions: ${t.conditions.join("; ")}

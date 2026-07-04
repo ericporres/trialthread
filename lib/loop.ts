@@ -4,7 +4,8 @@ import type { PatientProfile, RankedMatch, StreamEvent, Trial, TriageResult } fr
 
 const MAX_PASSES = 3;
 const STRONG_TARGET = 5;      // stop broadening once we have this many strong candidates
-const DEEP_LIMIT = 12;        // trials that get the full eligibility parse
+const DEEP_LIMIT = 10;        // trials that get the full eligibility parse (= display limit; was 12)
+const DEEP_FLOOR = 6;         // always deep-parse at least this many, even if triage is bearish
 const RESULTS_LIMIT = 10;
 const PER_PASS_CAP = 120;     // trials per search pass sent to triage
 
@@ -105,9 +106,11 @@ export async function* runMatchLoop(
   }
 
   // Rank by triage, deep-parse the top candidates.
-  const ranked = [...allTriage.values()]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, DEEP_LIMIT);
+  // Cost discipline: don't pay the deep parse to confirm triage's "unlikely" —
+  // unless the pool is so thin we'd show too little (DEEP_FLOOR).
+  const rankedAll = [...allTriage.values()].sort((a, b) => b.score - a.score);
+  const promising = rankedAll.filter((r) => r.flag !== "unlikely");
+  const ranked = (promising.length >= DEEP_FLOOR ? promising : rankedAll).slice(0, DEEP_LIMIT);
   const rankedTrials = ranked
     .map((r) => allTrials.find((t) => t.nctId === r.nctId))
     .filter((t): t is Trial => Boolean(t));

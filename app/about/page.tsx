@@ -109,7 +109,16 @@ export default function About() {
         eligibility. Always discuss any trial with your treating physician.
       </div>
       <footer className="site">
-        <Link href="/">← Back to the search</Link> · Data:{" "}
+        <Link href="/">← Back to the search</Link> ·{" "}
+        {process.env.NEXT_PUBLIC_SPONSORS_URL && (
+          <>
+            <a href={process.env.NEXT_PUBLIC_SPONSORS_URL} target="_blank" rel="noreferrer">
+              Support TrialThread ♥
+            </a>{" "}
+            ·{" "}
+          </>
+        )}
+        Data:{" "}
         <a href="https://clinicaltrials.gov" target="_blank" rel="noreferrer">
           ClinicalTrials.gov
         </a>{" "}

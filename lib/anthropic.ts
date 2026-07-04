@@ -27,7 +27,7 @@ export function client(): Anthropic {
  */
 export async function askJson<T>(opts: {
   model: string;
-  system: string;
+  system: string | Anthropic.TextBlockParam[];
   user: string;
   maxTokens?: number;
 }): Promise<T> {
