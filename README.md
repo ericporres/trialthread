@@ -44,7 +44,7 @@ The most valuable contribution is not code — it is **clinician-reviewed synthe
 
 ## Support
 
-Hosting and inference for the free instance cost real money (Vercel + Claude API) — the running bill is public in [COSTS.md](COSTS.md), so "every dollar goes to servers and tokens" is checkable, not asserted. A GitHub Sponsors link is coming; until then, the best support is a test vignette, a bug report, or telling one oncology social worker this exists.
+Hosting and inference for the free instance cost real money (Vercel + Claude API) — the running bill is public in [COSTS.md](COSTS.md), so "every dollar goes to servers and tokens" is checkable, not asserted. Sponsor the free searches at [github.com/sponsors/ericporres](https://github.com/sponsors/ericporres) (zero platform fees, publicly visible) — or contribute a test vignette, a bug report, or tell one oncology social worker this exists.
 
 ## Prior art and lineage
 
