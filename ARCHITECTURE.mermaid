@@ -1,0 +1,26 @@
+flowchart TD
+    U[Patient / caregiver\nfree-text description] --> UI[Next.js single page\napp/page.tsx]
+    UI -->|POST /api/match| API[Streaming route\napp/api/match/route.ts\nNDJSON events]
+
+    API --> EX[Extraction\nlib/extract.ts\nClaude Sonnet → PatientProfile\nincl. LLM city-level geocode]
+    EX --> LOOP[Karpathy loop\nlib/loop.ts\nsearch → score → assess → broaden]
+
+    LOOP -->|query.cond + filter.geo + RECRUITING| CTG[(clinicaltrials.gov\nAPI v2 — live, no key)]
+    CTG --> NORM[Normalize + haversine distances\nlib/ctgov.ts]
+    NORM --> TRI[Triage — Claude Haiku\nbatched 12/call, 5-way parallel\nstrong / possible / unlikely]
+    TRI --> COV{≥5 strong\nor 3 passes?}
+    COV -->|no| BR[Broaden ladder:\n1. geo 100→300mi→national\n2. parent condition terms\n3. biomarker basket hunt]
+    BR --> LOOP
+    COV -->|yes| DEEP[Deep eligibility parse — Claude Sonnet\ntop 12, criteria-grounded:\nmatchPoints / concerns / questions]
+    DEEP --> RANK[Rank: verdict → triage score → distance]
+    RANK -->|stream: results| UI
+
+    subgraph Stateless by design
+        API
+        EX
+        LOOP
+    end
+
+    style CTG fill:#eaf4f2,stroke:#0e7c6e
+    style DEEP fill:#eaf4f2,stroke:#0e7c6e
+    style U fill:#faf3e3,stroke:#e8d5a4
