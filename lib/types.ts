@@ -86,4 +86,4 @@ export type StreamEvent =
   | { type: "pass"; pass: number; label: string; found: number; scored: number; strong: number }
   | { type: "broaden"; strategy: string }
   | { type: "results"; matches: RankedMatch[]; totalConsidered: number; passes: number }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string; stage?: string };

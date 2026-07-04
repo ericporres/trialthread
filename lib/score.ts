@@ -1,4 +1,4 @@
-import { askJson, MODELS, MOCK, pool } from "./anthropic";
+import { askJson, MODELS, MOCK, pool, safeErr } from "./anthropic";
 import type { DeepScore, PatientProfile, Trial, TriageResult } from "./types";
 
 function profileSummary(p: PatientProfile): string {
@@ -75,8 +75,9 @@ export async function triageTrials(
       // Keep only entries we can attribute to a real trial in this batch.
       const valid = new Set(batch.map((t) => t.nctId));
       return res.filter((r) => valid.has(r.nctId));
-    } catch {
+    } catch (e) {
       // A failed batch degrades to "possible" so trials aren't silently lost.
+      console.error("tt_search_error", "triage", safeErr(e));
       return batch.map((t) => ({
         nctId: t.nctId,
         score: 40,
@@ -153,7 +154,8 @@ ${(t.eligibilityCriteria ?? "Not provided").slice(0, 9000)}
 Return the JSON now.`,
         maxTokens: 1400,
       });
-    } catch {
+    } catch (e) {
+      console.error("tt_search_error", "deep", safeErr(e));
       return {
         nctId: t.nctId,
         verdict: "uncertain" as const,

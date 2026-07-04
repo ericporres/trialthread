@@ -18,7 +18,7 @@ type Funnel =
   | { e: "profile_ok"; hasLocation: boolean }
   | { e: "results"; n: number; strong: number; uncertain: number; unlikely: number; passes: number; considered: number }
   | { e: "zero_results"; passes: number }
-  | { e: "search_error" }
+  | { e: "search_error"; stage: string }
   | { e: "nct_click"; rank: number }
   | { e: "trial_expanded"; rank: number };
 

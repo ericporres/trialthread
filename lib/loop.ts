@@ -1,3 +1,4 @@
+import { safeErr } from "./anthropic";
 import { dedupeTrials, searchTrials } from "./ctgov";
 import { deepScore, triageTrials } from "./score";
 import type { PatientProfile, RankedMatch, StreamEvent, Trial, TriageResult } from "./types";
@@ -65,9 +66,10 @@ export async function* runMatchLoop(
         pageSize: PER_PASS_CAP,
       });
     } catch (e) {
+      console.error("tt_search_error", "ctgov", safeErr(e));
       yield {
         type: "status",
-        message: `clinicaltrials.gov error on this pass (${(e as Error).message}) — continuing`,
+        message: "clinicaltrials.gov hiccuped on this pass — continuing with what we have",
       };
     }
     executed.push(plan.label);

@@ -75,7 +75,7 @@ export default function Home() {
       }
       setPhase((p) => (p === "running" ? "done" : p));
     } catch (e) {
-      tt({ e: "search_error" });
+      tt({ e: "search_error", stage: "client" });
       setError((e as Error).message);
       setPhase("error");
     }
@@ -124,6 +124,7 @@ export default function Home() {
         break;
       }
       case "error":
+        tt({ e: "search_error", stage: e.stage ?? "server" });
         setError(e.message);
         setPhase("error");
         break;

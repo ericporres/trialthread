@@ -1,3 +1,4 @@
+import { safeErr } from "@/lib/anthropic";
 import { extractProfile } from "@/lib/extract";
 import { runMatchLoop } from "@/lib/loop";
 import type { StreamEvent } from "@/lib/types";
@@ -54,9 +55,11 @@ export async function POST(req: Request): Promise<Response> {
       const send = (e: StreamEvent) =>
         controller.enqueue(encoder.encode(JSON.stringify(e) + "\n"));
 
+      let stage = "start";
       try {
         send({ type: "status", message: "Reading your description" });
 
+        stage = "extract";
         let profile;
         try {
           profile = await extractProfile(description);
@@ -64,6 +67,7 @@ export async function POST(req: Request): Promise<Response> {
           if ((e as Error).message === "NO_CONDITION") {
             send({
               type: "error",
+              stage,
               message:
                 "We couldn't identify a medical condition in that description. Try including the diagnosis name — for example, \"my mother has stage 4 pancreatic cancer\".",
             });
@@ -75,13 +79,19 @@ export async function POST(req: Request): Promise<Response> {
 
         send({ type: "profile", profile });
 
+        stage = "pipeline";
         for await (const event of runMatchLoop(profile)) {
           send(event);
         }
       } catch (e) {
+        // Server-side failure log — stage + content-scrubbed error only.
+        // Patient text must never appear here (see safeErr).
+        console.error("tt_search_error", stage, safeErr(e));
         send({
           type: "error",
-          message: `Something went wrong during the search: ${(e as Error).message}. Please try again.`,
+          stage,
+          message:
+            "Something went wrong during the search — usually a brief hiccup on our side or at clinicaltrials.gov. Please try again in a moment.",
         });
       } finally {
         controller.close();
