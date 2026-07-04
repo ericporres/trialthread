@@ -32,6 +32,13 @@ prior trastuzumab and taxane, ER-negative, lives near White Plains NY.
 
 TypeScript strict, no new dependencies without a reason stated in the PR, `npx tsc --noEmit` and `npm run build` clean. Keep the app stateless: PRs that add accounts, storage, or tracking to this repo will be declined — that boundary is [documented in the README](README.md#project-boundary).
 
+## How changes ship (read before your first PR)
+
+**`main` auto-deploys to production at trialthread.com — a live product used by people in medical crisis.** Two hard rules follow from that:
+
+1. **Fork and PR. Never push to `main`.** Every change lands through a reviewed pull request; the merge is the deploy.
+2. **The eval is the definition of done.** Run `node eval/run-eval.mjs <your-preview-url>` (or against a local `next start`) before requesting review, and paste the summary line into the PR. It mechanically catches the failure modes that matter here: hallucinated NCT IDs, absolute eligibility language ("you qualify"), zero-result regressions, and latency blowups. A PR that makes the pipeline faster but fails the eval is not an optimization — it is a regression with good branding. Note the eval makes real API calls (~$0.25/vignette with a key; `TRIALTHREAD_MOCK=1` exercises everything except LLM output quality).
+
 ## Ground rules
 
 - No real patient data anywhere: issues, PRs, commits, screenshots.
