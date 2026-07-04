@@ -306,6 +306,29 @@ textarea::placeholder { color: var(--muted); }
 .empty-state h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 20px; color: var(--ink); }
 .empty-state p { margin: 0 0 8px; }
 
+/* ---------- about page ---------- */
+
+.prose { max-width: 62ch; }
+.prose h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 32px 0 16px;
+}
+.prose h3 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 21px;
+  color: var(--ink);
+  margin: 32px 0 12px;
+}
+.prose p { margin: 0 0 16px; }
+.prose strong { color: var(--ink); }
+.prose a { color: var(--teal-700); }
+.signoff { margin-top: 28px; color: var(--muted); }
+
 /* ---------- footer ---------- */
 
 .disclaimer {
