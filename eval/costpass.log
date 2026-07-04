@@ -1,0 +1,4 @@
+PASS  her2-mbc-westchester  61.7s  matches=9 passes=1 considered=35 nctLive=9/9 verdicts={"uncertain":8,"likely-ineligible":1}
+PASS  ms-no-location  47.17s  matches=10 passes=1 considered=52 nctLive=10/10 verdicts={"uncertain":9,"likely-ineligible":1}
+
+2/2 passed · p50 61.7s · max 61.7s · written /Users/eporres/Library/CloudStorage/Dropbox/Manual Library/ASimpleIdea/AI_Sandbox/ClaudeCode_2026/personal/trialthread/eval/results/eval-2026-07-04.json

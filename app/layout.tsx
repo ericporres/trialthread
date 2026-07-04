@@ -9,6 +9,7 @@ const serif = Newsreader({ subsets: ["latin"], variable: "--font-serif", weight:
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.trialthread.org"),
   title: "TrialThread — find clinical trials you'd never find on your own",
   description:
     "Describe a diagnosis in plain language. TrialThread searches clinicaltrials.gov, reads the eligibility criteria, and explains — in plain English — which recruiting trials may fit and why.",

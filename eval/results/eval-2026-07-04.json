@@ -1,58 +1,59 @@
 {
-  "date": "2026-07-04T07:45:25.325Z",
+  "date": "2026-07-04T18:08:03.469Z",
   "base": "https://trialthread.vercel.app",
   "passed": 2,
   "total": 2,
-  "p50LatencyS": 53.52,
-  "maxLatencyS": 53.52,
+  "p50LatencyS": 61.7,
+  "maxLatencyS": 61.7,
   "results": [
     {
-      "id": "nsclc-egfr-stamford",
+      "id": "her2-mbc-westchester",
       "ok": true,
-      "latencyS": 53.52,
-      "passes": 3,
-      "considered": 34,
-      "matches": 10,
+      "latencyS": 61.7,
+      "passes": 1,
+      "considered": 35,
+      "matches": 9,
       "verdicts": {
-        "uncertain": 10
+        "uncertain": 8,
+        "likely-ineligible": 1
       },
       "nctIds": [
-        "NCT04486833",
-        "NCT06652048",
-        "NCT05642572",
-        "NCT06363734",
-        "NCT06706076",
-        "NCT07535437",
-        "NCT06775743",
-        "NCT05394831",
-        "NCT07362940",
-        "NCT04762199"
+        "NCT03418961",
+        "NCT06435429",
+        "NCT06686394",
+        "NCT05748834",
+        "NCT05150691",
+        "NCT07007559",
+        "NCT05894239",
+        "NCT06625775",
+        "NCT07459673"
       ],
-      "nctLive": "10/10",
+      "nctLive": "9/9",
       "hedgingViolations": [],
       "errors": []
     },
     {
       "id": "ms-no-location",
       "ok": true,
-      "latencyS": 50.01,
+      "latencyS": 47.17,
       "passes": 1,
       "considered": 52,
       "matches": 10,
       "verdicts": {
-        "uncertain": 10
+        "uncertain": 9,
+        "likely-ineligible": 1
       },
       "nctIds": [
-        "NCT06267781",
         "NCT04047628",
-        "NCT05177523",
-        "NCT07222618",
+        "NCT06267781",
         "NCT03783416",
         "NCT07318129",
+        "NCT05177523",
         "NCT06611280",
-        "NCT05958381",
-        "NCT05949580",
-        "NCT06516458"
+        "NCT06715436",
+        "NCT07376772",
+        "NCT05359653",
+        "NCT06629428"
       ],
       "nctLive": "10/10",
       "hedgingViolations": [],

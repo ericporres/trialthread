@@ -2,11 +2,11 @@
 
 **An AI agent that finds clinical trials people would never find on their own — and explains, in plain English, why each one may or may not fit.**
 
-Live instance: **[trialthread.com](https://trialthread.com)** (free, no account, nothing you type is stored)
+Live instance: **[trialthread.org](https://www.trialthread.org)** — free, no account, nothing you type is stored (also reachable via trialthread.com)
 
 ## Why
 
-Every recruiting trial in the United States is publicly listed on [clinicaltrials.gov](https://clinicaltrials.gov), and almost nobody can find the one that fits. The registry speaks in eligibility criteria; patients speak in plain language. The translation layer between them has mostly lived inside the heads of research nurses and well-connected oncologists. This project makes that layer free. The longer version is on the [About page](https://trialthread.com/about).
+Every recruiting trial in the United States is publicly listed on [clinicaltrials.gov](https://clinicaltrials.gov), and almost nobody can find the one that fits. The registry speaks in eligibility criteria; patients speak in plain language. The translation layer between them has mostly lived inside the heads of research nurses and well-connected oncologists. This project makes that layer free. The longer version is on the [About page](https://www.trialthread.org/about).
 
 ## How it works
 
