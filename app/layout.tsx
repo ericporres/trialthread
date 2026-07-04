@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 import { IBM_Plex_Mono, Newsreader, Public_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -14,9 +16,21 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const cfToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Cookieless analytics only — see lib/analytics.ts privacy contract. No Google Analytics by design. */}
+        <Analytics />
+        {cfToken && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={`{"token": "${cfToken}"}`}
+            strategy="afterInteractive"
+          />
+        )}
+      </body>
     </html>
   );
 }

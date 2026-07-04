@@ -1,0 +1,2 @@
+PASS  her2-mbc-westchester  78.76s  matches=10 passes=3 considered=148 nctLive=10/10 verdicts={"likely-eligible":1,"uncertain":9}
+FAIL  nsclc-egfr-stamford  53.5s  matches=10 passes=3 considered=34 nctLive=10/10 verdicts={"uncertain":10} HEDGING=NCT05642572: /you qualify\b/i|NCT05284539: /you qualify\b/i

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { tt } from "@/lib/analytics";
 import type { PatientProfile, RankedMatch, StreamEvent } from "@/lib/types";
 
 const EXAMPLES = [
@@ -36,6 +37,7 @@ export default function Home() {
   const resultsRef = useRef<HTMLDivElement>(null);
 
   async function run() {
+    tt({ e: "search_started" });
     setPhase("running");
     setProfile(null);
     setLedger([]);
@@ -73,6 +75,7 @@ export default function Home() {
       }
       setPhase((p) => (p === "running" ? "done" : p));
     } catch (e) {
+      tt({ e: "search_error" });
       setError((e as Error).message);
       setPhase("error");
     }
@@ -84,6 +87,7 @@ export default function Home() {
         setLedger((l) => [...l, { kind: "status", text: e.message }]);
         break;
       case "profile":
+        tt({ e: "profile_ok", hasLocation: Boolean(e.profile.location) });
         setProfile(e.profile);
         break;
       case "pass":
@@ -98,12 +102,27 @@ export default function Home() {
       case "broaden":
         setLedger((l) => [...l, { kind: "broaden", text: `widening the net → ${e.strategy}` }]);
         break;
-      case "results":
+      case "results": {
+        const count = (v: string) => e.matches.filter((m) => m.deep.verdict === v).length;
+        if (e.matches.length === 0) {
+          tt({ e: "zero_results", passes: e.passes });
+        } else {
+          tt({
+            e: "results",
+            n: e.matches.length,
+            strong: count("likely-eligible"),
+            uncertain: count("uncertain"),
+            unlikely: count("likely-ineligible"),
+            passes: e.passes,
+            considered: e.totalConsidered,
+          });
+        }
         setMatches(e.matches);
         setTotals({ considered: e.totalConsidered, passes: e.passes });
         setPhase("done");
         setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
         break;
+      }
       case "error":
         setError(e.message);
         setPhase("error");
@@ -240,7 +259,12 @@ export default function Home() {
                 <ul className="match-list">
                   {matches.map((m) => (
                     <li key={m.trial.nctId}>
-                      <details className="match">
+                      <details
+                        className="match"
+                        onToggle={(ev) => {
+                          if ((ev.target as HTMLDetailsElement).open) tt({ e: "trial_expanded", rank: m.rank });
+                        }}
+                      >
                         <summary>
                           <span className="match-rank">{String(m.rank).padStart(2, "0")}</span>
                           <span>
@@ -308,7 +332,12 @@ export default function Home() {
                             </>
                           )}
                           <div className="match-links">
-                            <a href={m.trial.url} target="_blank" rel="noreferrer">
+                            <a
+                              href={m.trial.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              onClick={() => tt({ e: "nct_click", rank: m.rank })}
+                            >
                               Official listing ({m.trial.nctId}) ↗
                             </a>
                             {m.trial.centralContacts[0]?.phone && (
