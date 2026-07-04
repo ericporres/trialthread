@@ -1,42 +1,15 @@
 {
-  "date": "2026-07-04T07:40:37.068Z",
+  "date": "2026-07-04T07:45:25.325Z",
   "base": "https://trialthread.vercel.app",
-  "passed": 4,
-  "total": 6,
-  "p50LatencyS": 63.72,
-  "maxLatencyS": 78.76,
+  "passed": 2,
+  "total": 2,
+  "p50LatencyS": 53.52,
+  "maxLatencyS": 53.52,
   "results": [
     {
-      "id": "her2-mbc-westchester",
-      "ok": true,
-      "latencyS": 78.76,
-      "passes": 3,
-      "considered": 148,
-      "matches": 10,
-      "verdicts": {
-        "likely-eligible": 1,
-        "uncertain": 9
-      },
-      "nctIds": [
-        "NCT06603597",
-        "NCT07413939",
-        "NCT06278870",
-        "NCT06313086",
-        "NCT06435429",
-        "NCT06686394",
-        "NCT05748834",
-        "NCT05856383",
-        "NCT07047365",
-        "NCT05872295"
-      ],
-      "nctLive": "10/10",
-      "hedgingViolations": [],
-      "errors": []
-    },
-    {
       "id": "nsclc-egfr-stamford",
-      "ok": false,
-      "latencyS": 53.5,
+      "ok": true,
+      "latencyS": 53.52,
       "passes": 3,
       "considered": 34,
       "matches": 10,
@@ -48,95 +21,12 @@
         "NCT06652048",
         "NCT05642572",
         "NCT06363734",
-        "NCT06775743",
+        "NCT06706076",
         "NCT07535437",
-        "NCT07362940",
-        "NCT04762199",
+        "NCT06775743",
         "NCT05394831",
-        "NCT05284539"
-      ],
-      "nctLive": "10/10",
-      "hedgingViolations": [
-        "NCT05642572: /you qualify\\b/i",
-        "NCT05284539: /you qualify\\b/i"
-      ],
-      "errors": []
-    },
-    {
-      "id": "pancreatic-nj",
-      "ok": true,
-      "latencyS": 48.11,
-      "passes": 1,
-      "considered": 16,
-      "matches": 10,
-      "verdicts": {
-        "uncertain": 6,
-        "likely-ineligible": 4
-      },
-      "nctIds": [
-        "NCT06850623",
-        "NCT06673017",
-        "NCT06698458",
-        "NCT05851924",
-        "NCT06984562",
-        "NCT05365581",
-        "NCT06998940",
-        "NCT06051695",
-        "NCT06582017",
-        "NCT07488676"
-      ],
-      "nctLive": "10/10",
-      "hedgingViolations": [],
-      "errors": []
-    },
-    {
-      "id": "dlbcl-relapsed-boston",
-      "ok": true,
-      "latencyS": 63.72,
-      "passes": 2,
-      "considered": 30,
-      "matches": 10,
-      "verdicts": {
-        "uncertain": 10
-      },
-      "nctIds": [
-        "NCT06550141",
-        "NCT06458439",
-        "NCT07478848",
-        "NCT05890352",
-        "NCT04889716",
-        "NCT07188558",
-        "NCT05633615",
-        "NCT06533579",
-        "NCT05272384",
-        "NCT06898905"
-      ],
-      "nctLive": "10/10",
-      "hedgingViolations": [],
-      "errors": []
-    },
-    {
-      "id": "als-chicago",
-      "ok": true,
-      "latencyS": 72.3,
-      "passes": 3,
-      "considered": 124,
-      "matches": 10,
-      "verdicts": {
-        "likely-eligible": 1,
-        "uncertain": 9
-      },
-      "nctIds": [
-        "NCT06885918",
-        "NCT06249867",
-        "NCT07414212",
-        "NCT07660614",
-        "NCT04220190",
-        "NCT07413718",
-        "NCT06126315",
-        "NCT06453668",
-        "NCT04297683",
-        "NCT06671236"
+        "NCT07362940",
+        "NCT04762199"
       ],
       "nctLive": "10/10",
       "hedgingViolations": [],
@@ -144,31 +34,28 @@
     },
     {
       "id": "ms-no-location",
-      "ok": false,
-      "latencyS": 50.99,
+      "ok": true,
+      "latencyS": 50.01,
       "passes": 1,
       "considered": 52,
       "matches": 10,
       "verdicts": {
-        "likely-eligible": 1,
-        "uncertain": 9
+        "uncertain": 10
       },
       "nctIds": [
-        "NCT06586177",
         "NCT06267781",
-        "NCT05177523",
         "NCT04047628",
-        "NCT07193823",
+        "NCT05177523",
+        "NCT07222618",
         "NCT03783416",
         "NCT07318129",
         "NCT06611280",
-        "NCT06569550",
-        "NCT05748015"
+        "NCT05958381",
+        "NCT05949580",
+        "NCT06516458"
       ],
       "nctLive": "10/10",
-      "hedgingViolations": [
-        "NCT07193823: /you qualify\\b/i"
-      ],
+      "hedgingViolations": [],
       "errors": []
     }
   ]

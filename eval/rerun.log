@@ -1,0 +1,4 @@
+PASS  nsclc-egfr-stamford  53.52s  matches=10 passes=3 considered=34 nctLive=10/10 verdicts={"uncertain":10}
+PASS  ms-no-location  50.01s  matches=10 passes=1 considered=52 nctLive=10/10 verdicts={"uncertain":10}
+
+2/2 passed · p50 53.52s · max 53.52s · written /Users/eporres/Library/CloudStorage/Dropbox/Manual Library/ASimpleIdea/AI_Sandbox/ClaudeCode_2026/personal/trialthread/eval/results/eval-2026-07-04.json
