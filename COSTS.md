@@ -16,7 +16,8 @@ TrialThread is free for patients, forever. Free means someone pays the infrastru
 |------|------|--------|
 | 2026-07-04 | Pre-launch: first live run + 6-vignette launch eval + hedging-fix re-runs (9 searches, measured off the Console balance) | $2.79 |
 | 2026-07-04 | Post-launch verification runs (cost-pass rerun ×2, observability smoke ×1, estimated at measured rates) | ~$0.75 |
-| 2026-07-04 → | Organic patient searches | tracked via Console balance; folded into the next entry |
+| 2026-07-04 → | Organic patient searches | tracked via the dedicated API key's Cost column (cleaner than balance-delta: per-key attribution) |
+| 2026-07-05 | First ledger check: key cost $7.18 total → $3.63 organic after dev/eval spend ≈ **14-15 patient searches in the first day** | $3.63 |
 
 **API credit runway:** roughly $99 remaining ≈ 400–500 searches at current rates. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
 
