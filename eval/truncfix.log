@@ -1,0 +1,3 @@
+PASS  her2-mbc-westchester  93.86s  matches=10 passes=3 considered=148 nctLive=10/10 verdicts={"likely-eligible":1,"uncertain":8,"likely-ineligible":1}
+
+1/1 passed · p50 93.86s · max 93.86s · written /Users/eporres/Library/CloudStorage/Dropbox/Manual Library/ASimpleIdea/AI_Sandbox/ClaudeCode_2026/personal/trialthread/eval/results/eval-2026-07-05.json

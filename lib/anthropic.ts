@@ -42,7 +42,13 @@ export function safeErr(e: unknown): string {
   ];
   const hit = SAFE.find((p) => p.test(msg));
   const detail = hit ? msg.slice(0, 120) : msg.startsWith("Model returned non-JSON") ? "model-non-json-output" : "msg-suppressed";
-  return `${name}: ${detail}`;
+  // Code location from the stack — our file paths only, never message content.
+  // Turns an otherwise-redacted error into something diagnosable: "msg-suppressed at lib/ctgov.ts:87".
+  const frame =
+    e instanceof Error && e.stack
+      ? (e.stack.match(/\((?:.*?)((?:app|lib)\/[\w./-]+:\d+)(?::\d+)?\)/) ?? e.stack.match(/at ((?:app|lib)\/[\w./-]+:\d+)/))?.[1]
+      : null;
+  return `${name}: ${detail}${frame ? ` at ${frame}` : ""}`;
 }
 
 function transient(e: unknown): boolean {

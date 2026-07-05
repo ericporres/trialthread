@@ -1,0 +1,38 @@
+{
+  "date": "2026-07-05T03:29:51.662Z",
+  "base": "https://www.trialthread.org",
+  "passed": 1,
+  "total": 1,
+  "p50LatencyS": 93.86,
+  "maxLatencyS": 93.86,
+  "results": [
+    {
+      "id": "her2-mbc-westchester",
+      "ok": true,
+      "latencyS": 93.86,
+      "passes": 3,
+      "considered": 148,
+      "matches": 10,
+      "verdicts": {
+        "likely-eligible": 1,
+        "uncertain": 8,
+        "likely-ineligible": 1
+      },
+      "nctIds": [
+        "NCT06603597",
+        "NCT06278870",
+        "NCT06313086",
+        "NCT07413939",
+        "NCT05748834",
+        "NCT06595563",
+        "NCT06435429",
+        "NCT06686394",
+        "NCT06958627",
+        "NCT07459673"
+      ],
+      "nctLive": "10/10",
+      "hedgingViolations": [],
+      "errors": []
+    }
+  ]
+}
