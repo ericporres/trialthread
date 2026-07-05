@@ -152,7 +152,7 @@ FULL ELIGIBILITY CRITERIA:
 ${(t.eligibilityCriteria ?? "Not provided").slice(0, 9000)}
 
 Return the JSON now.`,
-        maxTokens: 1400,
+        maxTokens: 2200,
       });
     } catch (e) {
       console.error("tt_search_error", "deep", safeErr(e));

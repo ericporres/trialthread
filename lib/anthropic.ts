@@ -51,7 +51,8 @@ function transient(e: unknown): boolean {
   return (
     status === 429 || status === 500 || status === 529 ||
     /overloaded|rate.?limit|timeout|timed out|fetch failed|ECONNRESET|EAI_AGAIN|network/i.test(msg) ||
-    msg.startsWith("Model returned non-JSON") // model hiccup — one re-ask is cheap and usually clean
+    msg.startsWith("Model returned non-JSON") || // model hiccup — one re-ask is cheap and usually clean
+    msg.startsWith("output-truncated") // clipped JSON — retried with doubled cap
   );
 }
 
@@ -72,7 +73,11 @@ export async function askJson<T>(opts: {
     if (!transient(e)) throw e;
     console.error("tt_retry", safeErr(e));
     await new Promise((s) => setTimeout(s, 1500));
-    return askJsonOnce<T>(opts);
+    // Truncated output re-fails at the same cap — retry with headroom.
+    const truncated = e instanceof Error && e.message.startsWith("output-truncated");
+    return askJsonOnce<T>(
+      truncated ? { ...opts, maxTokens: Math.round((opts.maxTokens ?? 2000) * 2) } : opts
+    );
   }
 }
 
@@ -88,6 +93,11 @@ async function askJsonOnce<T>(opts: {
     system: opts.system,
     messages: [{ role: "user", content: opts.user }],
   });
+
+  if (msg.stop_reason === "max_tokens") {
+    // JSON clipped mid-stream would parse as garbage — name the real failure.
+    throw new Error("output-truncated-max-tokens");
+  }
 
   const text = msg.content
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
