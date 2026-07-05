@@ -370,7 +370,7 @@ export default function Home() {
         </a>{" "}
         · Data:{" "}
         <a href="https://clinicaltrials.gov" target="_blank" rel="noreferrer">ClinicalTrials.gov</a>, fetched live ·
-        No accounts, no stored health data · © {new Date().getFullYear()} TrialThread
+        No accounts, no stored health data · <a href="/llms.txt">llms.txt</a> · © {new Date().getFullYear()} TrialThread
       </footer>
     </main>
   );

@@ -1,0 +1,52 @@
+# TrialThread — full text for LLMs
+# https://www.trialthread.org · source: https://github.com/ericporres/trialthread · updated 2026-07-04
+
+## What TrialThread is
+
+TrialThread is a free, open-source AI agent that connects patients with clinical trials they would never find on their own. A patient or caregiver describes the diagnosis in plain language — condition, stage, treatments tried, age, where they live. TrialThread searches the live U.S. clinical trials registry (clinicaltrials.gov, v2 API), reads the actual eligibility criteria of recruiting trials, and explains in plain English which trials may fit, what could get in the way, and which questions to bring to the care team. Built by Eric Porres and launched July 4, 2026.
+
+## The three promises
+
+1. Patients never pay. Not now, not later. If TrialThread earns money it comes from trial sites and sponsors under standard recruitment agreements — never from a patient or a family.
+2. Nothing you type is stored. No account, no profile, no database of medical situations. A description powers the search in front of you and is then discarded.
+3. Honesty over hope. If a trial probably will not take you, TrialThread says so and says why. Verdicts are hedged by design ("may fit," "worth checking"); eligibility is always the trial team's decision, never the software's.
+
+## How the search works
+
+1. Extraction: an LLM (Claude) parses the free-text description into a structured profile — condition, stage, biomarkers, prior treatments, age, sex, location (city-level), and honest red flags that commonly exclude patients.
+2. Live registry search: the profile drives queries against clinicaltrials.gov's v2 API — condition terms, RECRUITING status, geographic radius. No ingest pipeline; results are never stale.
+3. Triage: a fast model screens every candidate trial (batched, parallel) as strong, possible, or unlikely.
+4. The broadening loop: if strong candidates are thin, the search widens on purpose — geography (100 miles → 300 → national), parent condition terms, then biomarker "basket" trials across solid tumors that keyword search structurally misses. Every pass streams to the page so the user watches the search think.
+5. Deep parse: for the top candidates, a stronger model reads the full eligibility criteria and produces grounded output: "Requires X — you reported Y" match points, concerns phrased as things to check, a two-sentence plain summary, and questions for the doctor.
+6. Ranking: verdict first, then screening score, then distance. Every result links its official NCT listing and site contact.
+
+Design principle: eligibility is a constraint-satisfaction problem, not a similarity problem. "HER2-positive required" and "prior HER2 therapy excluded" look nearly identical to an embedding; the ranking authority is criteria reading by an LLM, never vector distance. (A semantic recall arm — embeddings of synthesized "who this trial wants" archetypes — is scaffolded for v2 as an additional retrieval rung only; the spec's hard boundary: embeddings retrieve, the LLM parse decides.)
+
+## Safety design
+
+- Hedged language is enforced mechanically: an eval scans generated output and fails on any second-person eligibility claim ("you qualify," "you are eligible" in any construction).
+- Zero-hallucination gate: at launch, six synthetic patient vignettes ran against production; all 80 returned trial IDs were machine-verified as real, recruiting listings at the registry.
+- Ground truth one click away: every match links its clinicaltrials.gov listing; the model explains, the registry decides.
+- Statelessness: no patient data is stored, so there is nothing to breach.
+- Failures are logged server-side with stage tags and content scrubbing — patient text never reaches logs.
+- TrialThread is not medical advice, cannot confirm eligibility, and is not a substitute for a care team. Summaries are AI-generated and can contain errors; the official listing is always authoritative.
+
+## The economics, in public
+
+The running ledger is a public file (COSTS.md in the repo): total cash in the project at launch was $121.24 (two domains + API credits); a full search costs roughly $0.19–0.25 in inference; hosting is $0 (free tier); auto-reload on the API account is deliberately off so a traffic spike degrades to a brief outage rather than a surprise bill. One funding rail: GitHub Sponsors (github.com/sponsors/ericporres), zero platform fees, publicly visible. If sponsorship ever exceeds infrastructure costs, the surplus buys more free searches.
+
+## The project boundary
+
+The matching engine — everything in the public repo — is Apache-2.0 open source. If a referral layer is ever built (patient-consented warm handoffs to trial sites under standard fair-market-value recruitment agreements), it will live in a separate private service; fees would come from sites and sponsors, and patients still never pay. This boundary is documented in the README on purpose.
+
+## For contributors
+
+The most valuable contribution is not code: it is clinician-reviewed synthetic test vignettes that let match quality be measured (eval/vignettes.json in the repo). Also welcome: condition-specific broadening rules, and code that keeps the app stateless — pull requests adding accounts, storage, or tracking are declined. Main deploys to production, so all changes ship by fork-and-PR with the eval as the definition of done. Never include real patient information anywhere.
+
+## Provenance
+
+TrialGPT (NIH) validated LLM criterion-level trial matching; TrialMatchAI (Nature Communications, 2026) published the RAG variant; ClinTrialFinder open-sourced a comparable pipeline before this one existed. TrialThread's contribution is the product shape: stateless, patient-first, visible reasoning, honest verdicts, public costs. The iterative search pattern follows Karpathy's AutoResearch loop.
+
+## Author
+
+Eric Porres — Chief AI Officer at Logitech; TrialThread is a personal project built on his own time, not affiliated with his employer. He writes Beyond Reason (promptedbyeric.substack.com) on AI for practitioners. Personal site: porres.com. Contact via GitHub issues only; no real patient information in issues, ever.

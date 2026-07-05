@@ -1,0 +1,28 @@
+# TrialThread — trialthread.org
+
+> TrialThread is a free, open-source AI agent that matches patients to clinical trials by reading the actual eligibility criteria on clinicaltrials.gov and explaining them in plain English. No account, nothing typed is stored, and patients never pay. Built by Eric Porres; launched July 4, 2026.
+
+Every recruiting clinical trial in the United States is publicly listed, and almost nobody can find the one that fits: the registry speaks in eligibility criteria, patients speak in plain language. TrialThread is the translation layer — it searches the live registry near the patient, screens every candidate, widens the search deliberately when results are thin (geography, parent conditions, biomarker basket trials), then reads full criteria for the top candidates and explains fit, concerns, and questions to bring to a doctor. It is not medical advice; only a trial team can determine eligibility, and every match links its official registry listing.
+
+## The product
+
+- [TrialThread (live)](https://www.trialthread.org/): Describe a diagnosis in your own words; get ranked recruiting trials with plain-English, criteria-grounded explanations. Free, no account, typically 1–2 minutes per search.
+- [About — why this exists](https://www.trialthread.org/about): The founder's reasons, and the three promises: patients never pay, nothing you type is stored, honesty over hope.
+- [Full text for LLMs](https://www.trialthread.org/llms-full.txt): The product, the promises, the architecture, and the safety design as plain text.
+
+## The code and the receipts
+
+- [Source code](https://github.com/ericporres/trialthread): The whole application, Apache-2.0. The matching engine is deliberately open; eligibility judgments are made by an LLM reading full criteria, never by vector similarity.
+- [COSTS.md](https://github.com/ericporres/trialthread/blob/main/COSTS.md): The public running ledger — every dollar in and out, unit economics (~$0.25 per search), and what is deliberately uncounted.
+- [Eval harness](https://github.com/ericporres/trialthread/tree/main/eval): The launch gate. Six synthetic patient vignettes; every returned trial ID machine-verified against the registry (80/80 at launch, zero hallucinated).
+- [CONTRIBUTING.md](https://github.com/ericporres/trialthread/blob/main/CONTRIBUTING.md): The most valuable contribution is clinician-reviewed test vignettes, not code. Never include real patient information.
+- [Sponsor the free searches](https://github.com/sponsors/ericporres): One funding rail, zero platform fees, publicly visible. Sponsorship pays for hosting and inference only.
+
+## Data source
+
+- [ClinicalTrials.gov](https://clinicaltrials.gov): All trial data is queried live from the registry's v2 API at search time. Nothing is scraped, cached long-term, or stored about patients.
+
+## Author
+
+- [Eric Porres](https://porres.com): Chief AI Officer at Logitech; TrialThread is a personal project, built on his own time and not affiliated with his employer. He writes [Beyond Reason](https://promptedbyeric.substack.com).
+- Contact: via [GitHub issues](https://github.com/ericporres/trialthread/issues). No real patient information in issues, ever.
