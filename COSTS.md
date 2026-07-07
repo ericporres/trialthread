@@ -20,7 +20,7 @@ TrialThread is free for patients, forever. Free means someone pays the infrastru
 | 2026-07-05 | First ledger check: key cost $7.18 total → $3.63 organic after dev/eval spend ≈ **14-15 patient searches in the first day** | $3.63 |
 | 2026-07-07 | Second ledger check: key cost $12.15 total → $8.60 organic after dev/eval spend ≈ **34 patient searches all-time** (+$4.97 / ~20 since the 7/5 check) | $4.97 |
 
-**API credit runway:** roughly $94 remaining ≈ 375–475 searches at current rates. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
+**API credit runway:** $100 funded − $12.15 spent = **$87.85 remaining** ≈ 350–460 searches at current rates. The dedicated key's Cost column is TrialThread's exact all-time spend, so runway is always $100 minus that number. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
 
 ## Unit economics
 
