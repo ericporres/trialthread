@@ -12,3 +12,7 @@ SESSION.md
 PROJECT.md
 PROJECT.md.bak-*
 LAUNCH-BAR.md
+
+# saved search-result exports — never public (personal / may contain personal results)
+*.mhtml
+TrialThread_MyResults_*
