@@ -24,7 +24,7 @@ TrialThread is free for patients, forever. Free means someone pays the infrastru
 
 ## Unit economics
 
-A full search costs **≈ $0.19–0.25**: one Sonnet extraction (~$0.01), Haiku triage across every candidate (~$0.03–0.17 depending on how wide the loop broadens), and the dominant cost — Sonnet reading full eligibility criteria for the top candidates (~$0.13 after the July 4 caching + deep-pool pass; was ~$0.19). Measured baseline before optimization: $0.31/search across 9 production runs.
+A full search costs **≈ $0.19–0.25**: one Sonnet extraction (≈ $0.01), Haiku triage across every candidate (≈ $0.03–0.17 depending on how wide the loop broadens), and the dominant cost — Sonnet reading full eligibility criteria for the top candidates (≈ $0.13 after the July 4 caching + deep-pool pass; was ≈ $0.19). Measured baseline before optimization: $0.31/search across 9 production runs.
 
 ## What costs nothing (currently)
 
