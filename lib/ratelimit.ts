@@ -183,7 +183,34 @@ export async function checkLimits(req: Request): Promise<Decision> {
     };
   }
 
-  // ── layer 2: durable global (the one that actually bounds a drain) ───────
+  // ── layer 2: durable global counter ──────────────────────────────────────
+  //
+  // ⚠️ THE ONLY THING THAT EVER GOES TO THE SHARED STORE IS THIS: an integer
+  // tally of how many searches happened today. One key. No IP. No location. No
+  // condition. No free text. Nothing derived from anything a patient typed.
+  //
+  // An earlier draft ALSO wrote a durable per-IP key (`tt:ip:<ip>`), to stop
+  // cold-start dilution of layer 1. That was a mistake and it was caught before
+  // it shipped: an IP address is personal data, so that key would have made the
+  // cache a SUBPROCESSOR OF USER-IDENTIFYING DATA — while /privacy tells
+  // patients their IP reaches "the hosting provider," full stop. It would have
+  // quietly added a party to the data path that nobody was told about.
+  //
+  // Upstash's own terms are explicit that whatever you put in your data space
+  // is your responsibility ("If you store any sensitive personal information on
+  // our servers, you are consenting to our storage of that information"). Good.
+  // We store a counter. They receive no personal data, so there is no new
+  // subprocessor of patient information and /privacy needs no change.
+  //
+  // We lose very little: the global ceiling catches cold-start dilution anyway,
+  // because an attacker who evades the per-instance limiter still hits this
+  // wall. The bound survives; the covenant survives with it.
+  //
+  // ── RULE FOR WHOEVER TOUCHES THIS NEXT ──────────────────────────────────
+  // Nothing user-derived goes in this store. Not an IP, not a hashed IP, not a
+  // city, not a condition. If you find yourself wanting to key on the person,
+  // stop: you are about to trade the promise on the front page for a modest
+  // gain in rate-limiting precision. It is not worth it.
   const day = new Date().toISOString().slice(0, 10);
   const count = await incr(`tt:day:${day}`, 26 * 60 * 60);
   if (count !== null && count > GLOBAL_PER_DAY) {
@@ -193,17 +220,6 @@ export async function checkLimits(req: Request): Promise<Decision> {
       reason: "global_daily_cap",
       message:
         "TrialThread has hit its daily search limit — it runs on a small, fixed budget. Please try again tomorrow. In the meantime, the official registry is always available at clinicaltrials.gov.",
-    };
-  }
-
-  // Durable per-IP too, so cold-start dilution doesn't defeat layer 1.
-  const ipCount = await incr(`tt:ip:${ip}`, PER_IP.windowSec);
-  if (ipCount !== null && ipCount > PER_IP.max) {
-    return {
-      ok: false,
-      status: 429,
-      reason: "ip_durable",
-      message: "That's a few searches in a row. Please wait a few minutes and try again.",
     };
   }
 
