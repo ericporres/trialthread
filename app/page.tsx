@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import { tt } from "@/lib/analytics";
-import type { PatientProfile, RankedMatch, StreamEvent } from "@/lib/types";
+import type { PatientProfile, RankedMatch, StreamEvent, UrgentConcern } from "@/lib/types";
+import { SiteFooter } from "./site-footer";
 
 const EXAMPLES = [
   {
@@ -34,6 +35,7 @@ export default function Home() {
   const [matches, setMatches] = useState<RankedMatch[] | null>(null);
   const [totals, setTotals] = useState<{ considered: number; passes: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [urgent, setUrgent] = useState<UrgentConcern[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   async function run() {
@@ -44,6 +46,7 @@ export default function Home() {
     setMatches(null);
     setTotals(null);
     setError(null);
+    setUrgent([]);
 
     try {
       const res = await fetch("/api/match", {
@@ -89,6 +92,15 @@ export default function Home() {
       case "profile":
         tt({ e: "profile_ok", hasLocation: Boolean(e.profile.location) });
         setProfile(e.profile);
+        break;
+      case "safety":
+        // Arrives before the search starts, so it is on screen while the person
+        // is still waiting — not buried under ten trials ninety seconds later.
+        // Deliberately NOT sent to analytics: the fact that someone disclosed
+        // suicidal ideation is the single most sensitive thing that could
+        // possibly cross this wire. It is displayed and then forgotten, like
+        // everything else here.
+        setUrgent(e.urgent);
         break;
       case "pass":
         setLedger((l) => [
@@ -145,19 +157,20 @@ export default function Home() {
 
       <p className="hero">Describe the diagnosis. We&rsquo;ll read the trials you&rsquo;d never find on your own.</p>
       <p className="hero-sub">
-        TrialThread searches the {""}
-        <a href="https://clinicaltrials.gov" target="_blank" rel="noreferrer">
-          U.S. clinical trials registry
-        </a>{" "}
-        the way a research nurse would: it starts near you, reads the actual eligibility criteria,
-        widens the search when the first pass is thin, and explains every match in plain English.
+        TrialThread searches clinicaltrials.gov — the government registry of nearly 600,000 studies —
+        the way you wish someone would: it starts near you, reads the actual eligibility criteria
+        instead of matching keywords, widens the search when the first pass is thin, and explains
+        every match in plain English.
       </p>
 
       <div className="honesty">
         <strong>What this is — and isn&rsquo;t.</strong> TrialThread finds and explains publicly
         listed studies. It is not medical advice, it cannot confirm you qualify — only a trial team
-        can — and it is not a substitute for your care team. Nothing you type here is stored:
-        your description is used for this search and then discarded.
+        can — and it is not a substitute for your care team.{" "}
+        <strong>Nothing you type here is stored.</strong> There is no account and no database; an
+        AI service reads your description to run the search, and does not keep it or train on it.
+        Please leave out names, dates of birth, and medical record numbers —{" "}
+        <a href="/privacy">here is exactly what happens to what you type</a>.
       </div>
 
       <section aria-label="Describe the condition">
@@ -192,6 +205,57 @@ export default function Home() {
         </div>
         {error && <div className="form-error" role="alert">{error}</div>}
       </section>
+
+      {/* ── SAFETY BANNER ───────────────────────────────────────────────────
+          Sits directly under the search box, above the progress ledger and
+          above every trial, and appears within seconds — before the search
+          finishes. Not dismissible. role="alert" so a screen reader announces
+          it immediately rather than when it reaches this point in the document.
+
+          The tone is deliberate. No sirens, no red, no capital letters. Someone
+          reading this is already frightened; alarming them further is not care,
+          it is theatre. The words below were written to be read by an exhausted
+          person at 2am who has just admitted something enormous to a website.
+          Change them carefully. */}
+      {urgent.length > 0 && (
+        <section className="safety" role="alert" aria-label="Please read this first">
+          {urgent.some((u) => u.kind === "self_harm") && (
+            <div className="safety-block">
+              <strong>Before anything else — please talk to someone.</strong>
+              <p>
+                You said something that matters more than any trial on this page. In the U.S. you
+                can call or text <strong>988</strong>, the Suicide &amp; Crisis Lifeline, any hour
+                of any day, and reach a real person. You can also chat at{" "}
+                <a href="https://988lifeline.org" target="_blank" rel="noreferrer">
+                  988lifeline.org
+                </a>
+                .
+              </p>
+              <p>
+                Caring for someone you love through cancer is one of the heaviest things a person
+                can do, and doing it while carrying this is heavier still. You deserve support of
+                your own — not only after, but now.
+              </p>
+            </div>
+          )}
+
+          {urgent.some((u) => u.kind === "medical_emergency") && (
+            <div className="safety-block">
+              <strong>This sounds like it needs help right now.</strong>
+              <p>
+                What you have described sounds like a medical emergency. Please call <strong>911</strong>{" "}
+                or go to the nearest emergency room — do not wait for this search. A clinical trial
+                cannot help with something that is happening in the next few minutes, and an
+                emergency department can.
+              </p>
+            </div>
+          )}
+
+          <p className="safety-foot">
+            The trial search is still running below, and your results will appear as usual.
+          </p>
+        </section>
+      )}
 
       {profile && (
         <section aria-label="What we understood">
@@ -363,15 +427,7 @@ export default function Home() {
         Always discuss any trial with your treating physician before contacting a site. If this is
         an emergency, call your doctor or local emergency services.
       </div>
-      <footer className="site">
-        <a href="/about">About — why this exists</a> ·{" "}
-        <a href="https://github.com/sponsors/ericporres" target="_blank" rel="noreferrer">
-          Support TrialThread ♥
-        </a>{" "}
-        · Data:{" "}
-        <a href="https://clinicaltrials.gov" target="_blank" rel="noreferrer">ClinicalTrials.gov</a>, fetched live ·
-        No accounts, no stored health data · <a href="/llms.txt">llms.txt</a> · © {new Date().getFullYear()} TrialThread
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

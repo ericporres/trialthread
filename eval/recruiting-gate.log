@@ -1,0 +1,8 @@
+PASS  her2-mbc-westchester  54.02s  matches=9 passes=1 considered=36 nctLive=9/9 nctRecruiting=9/9 verdicts={"uncertain":7,"likely-ineligible":2}
+PASS  nsclc-egfr-stamford  53.03s  matches=10 passes=3 considered=120 nctLive=10/10 nctRecruiting=10/10 verdicts={"uncertain":10}
+PASS  pancreatic-nj  37.34s  matches=7 passes=2 considered=20 nctLive=7/7 nctRecruiting=7/7 verdicts={"uncertain":6,"likely-ineligible":1}
+PASS  dlbcl-relapsed-boston  50.95s  matches=10 passes=2 considered=29 nctLive=10/10 nctRecruiting=10/10 verdicts={"uncertain":9,"likely-ineligible":1}
+PASS  als-chicago  45.83s  matches=10 passes=1 considered=12 nctLive=10/10 nctRecruiting=10/10 verdicts={"likely-eligible":5,"uncertain":5}
+PASS  ms-no-location  41.81s  matches=10 passes=1 considered=51 nctLive=10/10 nctRecruiting=10/10 verdicts={"uncertain":9,"likely-ineligible":1}
+
+6/6 passed · p50 50.95s · max 54.02s · written /private/tmp/tt-preview/eval/results/eval-2026-07-14.json

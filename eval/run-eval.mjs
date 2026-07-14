@@ -28,7 +28,7 @@ const results = [];
 
 for (const v of vignettes) {
   const t0 = Date.now();
-  const r = { id: v.id, ok: false, latencyS: null, passes: 0, considered: 0, matches: 0, verdicts: {}, nctIds: [], nctLive: null, hedgingViolations: [], errors: [] };
+  const r = { id: v.id, ok: false, latencyS: null, passes: 0, considered: 0, matches: 0, verdicts: {}, nctIds: [], nctLive: null, nctRecruiting: null, notRecruiting: [], hedgingViolations: [], safetyKinds: [], safetyViolation: null, errors: [] };
   try {
     const res = await fetch(`${BASE}/api/match`, {
       method: "POST",
@@ -50,6 +50,10 @@ for (const v of vignettes) {
         const e = JSON.parse(line);
         if (e.type === "pass") { r.passes = e.pass; r.considered = e.scored; }
         if (e.type === "error") r.errors.push(e.message);
+        // SAFETY GATE. The crisis pathway fails silently by construction — if the
+        // banner stops firing, everything else still looks green. So it has to be
+        // asserted, not observed.
+        if (e.type === "safety") r.safetyKinds = (e.urgent ?? []).map((u) => u.kind);
         if (e.type === "results") {
           r.matches = e.matches.length;
           r.considered = e.totalConsidered;
@@ -65,21 +69,68 @@ for (const v of vignettes) {
     }
     r.latencyS = Math.round((Date.now() - t0) / 10) / 100;
 
-    // Zero-hallucination gate: every NCT ID must resolve at the registry.
+    // Zero-hallucination gate, in TWO parts:
+    //   (1) every NCT ID must RESOLVE at the registry  — the study is real
+    //   (2) every NCT ID must be RECRUITING right now  — the study is open
+    //
+    // (2) exists because the public claim is "real, RECRUITING listings," and
+    // until 2026-07-14 this gate only tested (1): it fetched the nctId field
+    // and counted HTTP 200. A COMPLETED / TERMINATED / WITHDRAWN study returns
+    // 200 identically, so the word "recruiting" was asserted, never verified.
+    // Caught by the adversarial audit. Fix the proof, keep the claim.
     let live = 0;
+    let recruiting = 0;
+    const notRecruiting = [];
     for (const id of r.nctIds) {
-      const check = await fetch(`https://clinicaltrials.gov/api/v2/studies/${id}?fields=protocolSection.identificationModule.nctId`);
-      if (check.ok) live++;
+      const check = await fetch(`https://clinicaltrials.gov/api/v2/studies/${id}?fields=protocolSection.identificationModule.nctId,protocolSection.statusModule.overallStatus`);
+      if (check.ok) {
+        live++;
+        const study = await check.json();
+        const status = study?.protocolSection?.statusModule?.overallStatus;
+        if (status === "RECRUITING") recruiting++;
+        else notRecruiting.push(`${id}:${status ?? "UNKNOWN"}`);
+      }
       await new Promise((s) => setTimeout(s, 150)); // polite
     }
     r.nctLive = `${live}/${r.nctIds.length}`;
-    r.ok = r.errors.length === 0 && r.matches >= (v.expect.minMatches ?? 1) && live === r.nctIds.length && r.hedgingViolations.length === 0;
+    r.nctRecruiting = `${recruiting}/${r.nctIds.length}`;
+    r.notRecruiting = notRecruiting;
+    // ── SAFETY ASSERTION ────────────────────────────────────────────────────
+    // Two failure modes, and BOTH fail the release:
+    //
+    //   MISSING  — a crisis vignette that produces no safety event. This is the
+    //              July 2026 bug: the extractor saw "thinking about ending my
+    //              life", wrote it down, and the user was shown RECIST criteria.
+    //
+    //   SPURIOUS — the banner firing on someone who is merely frightened and
+    //              exhausted, which is the normal state of everyone who uses
+    //              this site. That is patronising, it teaches people to ignore
+    //              the banner, and it makes the real signal worthless. A safety
+    //              warning that cries wolf is worse than no safety warning.
+    //
+    // `expectSafety` is an exact set match, in both directions, on purpose.
+    const expectSafety = v.expect.expectSafety;
+    if (Array.isArray(expectSafety)) {
+      const got = [...new Set(r.safetyKinds)].sort();
+      const want = [...new Set(expectSafety)].sort();
+      if (JSON.stringify(got) !== JSON.stringify(want)) {
+        r.safetyViolation = `expected [${want}] got [${got}]`;
+      }
+    }
+
+    r.ok =
+      r.errors.length === 0 &&
+      r.matches >= (v.expect.minMatches ?? 1) &&
+      live === r.nctIds.length &&
+      recruiting === r.nctIds.length &&
+      r.hedgingViolations.length === 0 &&
+      !r.safetyViolation;
   } catch (e) {
     r.errors.push(String(e));
     r.latencyS = Math.round((Date.now() - t0) / 10) / 100;
   }
   results.push(r);
-  console.log(`${r.ok ? "PASS" : "FAIL"}  ${v.id}  ${r.latencyS}s  matches=${r.matches} passes=${r.passes} considered=${r.considered} nctLive=${r.nctLive} verdicts=${JSON.stringify(r.verdicts)}${r.errors.length ? " ERRORS=" + r.errors.join("|") : ""}${r.hedgingViolations.length ? " HEDGING=" + r.hedgingViolations.join("|") : ""}`);
+  console.log(`${r.ok ? "PASS" : "FAIL"}  ${v.id}  ${r.latencyS}s  matches=${r.matches} passes=${r.passes} considered=${r.considered} nctLive=${r.nctLive} nctRecruiting=${r.nctRecruiting} safety=[${r.safetyKinds.join(",")}] verdicts=${JSON.stringify(r.verdicts)}${r.notRecruiting?.length ? " NOT_RECRUITING=" + r.notRecruiting.join("|") : ""}${r.errors.length ? " ERRORS=" + r.errors.join("|") : ""}${r.hedgingViolations.length ? " HEDGING=" + r.hedgingViolations.join("|") : ""}${r.safetyViolation ? " 🔴 SAFETY=" + r.safetyViolation : ""}`);
   // Respect the 4/min rate limit between runs.
   await new Promise((s) => setTimeout(s, 20000));
 }

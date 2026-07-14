@@ -353,3 +353,63 @@ footer.site a { color: var(--teal-700); text-decoration: none; }
   .hero { font-size: 28px; }
   .masthead { padding-top: 32px; }
 }
+
+/* ---------- safety banner (crisis / emergency) ---------- */
+/*
+ * Deliberately NOT red, NOT flashing, NOT a siren.
+ *
+ * The person reading this is already frightened, and has just told a website
+ * something enormous. Alarming them harder is not care — it is theatre, and it
+ * makes the message easier to flinch away from. This uses the same warm amber
+ * as the rest of the "read this carefully" language, sized up and given room to
+ * breathe. It should read like someone lowering their voice, not raising it.
+ */
+.safety {
+  margin: 20px 0 4px;
+  padding: 20px 22px;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-line);
+  border-left: 3px solid var(--amber-ink);
+  border-radius: var(--radius);
+}
+.safety-block + .safety-block {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--amber-line);
+}
+.safety strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.safety p {
+  margin: 0 0 10px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--body);
+}
+.safety p:last-child { margin-bottom: 0; }
+.safety p strong {
+  display: inline;
+  font-family: var(--sans);
+  font-size: inherit;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+.safety a { color: var(--amber-ink); text-decoration: underline; }
+.safety-foot {
+  margin-top: 16px !important;
+  padding-top: 12px;
+  border-top: 1px solid var(--amber-line);
+  font-size: 14px !important;
+  color: var(--muted) !important;
+  font-style: italic;
+}
+
+/* three-line site footer — see app/site-footer.tsx */
+.footer-line { display: block; }
+.footer-line + .footer-line { margin-top: 4px; }

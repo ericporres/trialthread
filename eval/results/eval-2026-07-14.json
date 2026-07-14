@@ -1,0 +1,179 @@
+{
+  "date": "2026-07-14T04:30:15.434Z",
+  "base": "https://trialthread.vercel.app",
+  "passed": 6,
+  "total": 6,
+  "p50LatencyS": 50.95,
+  "maxLatencyS": 54.02,
+  "results": [
+    {
+      "id": "her2-mbc-westchester",
+      "ok": true,
+      "latencyS": 54.02,
+      "passes": 1,
+      "considered": 36,
+      "matches": 9,
+      "verdicts": {
+        "uncertain": 7,
+        "likely-ineligible": 2
+      },
+      "nctIds": [
+        "NCT06435429",
+        "NCT05894239",
+        "NCT06686394",
+        "NCT05748834",
+        "NCT03418961",
+        "NCT06625775",
+        "NCT05150691",
+        "NCT07007559",
+        "NCT07459673"
+      ],
+      "nctLive": "9/9",
+      "hedgingViolations": [],
+      "errors": [],
+      "nctRecruiting": "9/9",
+      "notRecruiting": []
+    },
+    {
+      "id": "nsclc-egfr-stamford",
+      "ok": true,
+      "latencyS": 53.03,
+      "passes": 3,
+      "considered": 120,
+      "matches": 10,
+      "verdicts": {
+        "uncertain": 10
+      },
+      "nctIds": [
+        "NCT07315113",
+        "NCT06417814",
+        "NCT06362980",
+        "NCT06363734",
+        "NCT06652048",
+        "NCT07699328",
+        "NCT07070440",
+        "NCT07100080",
+        "NCT06775743",
+        "NCT05401110"
+      ],
+      "nctLive": "10/10",
+      "hedgingViolations": [],
+      "errors": [],
+      "nctRecruiting": "10/10",
+      "notRecruiting": []
+    },
+    {
+      "id": "pancreatic-nj",
+      "ok": true,
+      "latencyS": 37.34,
+      "passes": 2,
+      "considered": 20,
+      "matches": 7,
+      "verdicts": {
+        "uncertain": 6,
+        "likely-ineligible": 1
+      },
+      "nctIds": [
+        "NCT06850623",
+        "NCT06984562",
+        "NCT06673017",
+        "NCT05851924",
+        "NCT06861088",
+        "NCT06698458",
+        "NCT04789486"
+      ],
+      "nctLive": "7/7",
+      "hedgingViolations": [],
+      "errors": [],
+      "nctRecruiting": "7/7",
+      "notRecruiting": []
+    },
+    {
+      "id": "dlbcl-relapsed-boston",
+      "ok": true,
+      "latencyS": 50.95,
+      "passes": 2,
+      "considered": 29,
+      "matches": 10,
+      "verdicts": {
+        "uncertain": 9,
+        "likely-ineligible": 1
+      },
+      "nctIds": [
+        "NCT07188558",
+        "NCT05633615",
+        "NCT07478848",
+        "NCT06533579",
+        "NCT06458439",
+        "NCT05890352",
+        "NCT04889716",
+        "NCT04792489",
+        "NCT04920617",
+        "NCT04512716"
+      ],
+      "nctLive": "10/10",
+      "hedgingViolations": [],
+      "errors": [],
+      "nctRecruiting": "10/10",
+      "notRecruiting": []
+    },
+    {
+      "id": "als-chicago",
+      "ok": true,
+      "latencyS": 45.83,
+      "passes": 1,
+      "considered": 12,
+      "matches": 10,
+      "verdicts": {
+        "likely-eligible": 5,
+        "uncertain": 5
+      },
+      "nctIds": [
+        "NCT05966038",
+        "NCT05067179",
+        "NCT06578195",
+        "NCT05137665",
+        "NCT07407725",
+        "NCT04297683",
+        "NCT07161999",
+        "NCT06735014",
+        "NCT07322003",
+        "NCT07002034"
+      ],
+      "nctLive": "10/10",
+      "hedgingViolations": [],
+      "errors": [],
+      "nctRecruiting": "10/10",
+      "notRecruiting": []
+    },
+    {
+      "id": "ms-no-location",
+      "ok": true,
+      "latencyS": 41.81,
+      "passes": 1,
+      "considered": 51,
+      "matches": 10,
+      "verdicts": {
+        "uncertain": 9,
+        "likely-ineligible": 1
+      },
+      "nctIds": [
+        "NCT05748015",
+        "NCT07318129",
+        "NCT06586177",
+        "NCT06526364",
+        "NCT04047628",
+        "NCT07193823",
+        "NCT04604041",
+        "NCT05359653",
+        "NCT05177523",
+        "NCT05834855"
+      ],
+      "nctLive": "10/10",
+      "hedgingViolations": [],
+      "errors": [],
+      "nctRecruiting": "10/10",
+      "notRecruiting": []
+    }
+  ]
+}

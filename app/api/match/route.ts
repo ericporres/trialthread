@@ -79,6 +79,23 @@ export async function POST(req: Request): Promise<Response> {
 
         send({ type: "profile", profile });
 
+        // ── SAFETY GATE ──────────────────────────────────────────────────────
+        // Emitted BEFORE the search, not after. This ordering is the entire
+        // fix, and it is not cosmetic.
+        //
+        // Before this existed, a caregiver who wrote "I have been thinking about
+        // ending my life once she is gone" got a 69-second spinner and then ten
+        // pancreatic trials annotated with RECIST criteria. The extractor had
+        // caught the suicidal ideation and written it down; nothing downstream
+        // ever read the field. (Audit, 2026-07-14. See audit/05-PHASE4-CRITICAL.md.)
+        //
+        // We do NOT block the search. They came here for trials and they should
+        // still get their trials — refusing to help would punish them for being
+        // honest with us. We simply say the important thing first.
+        if (profile.urgent?.length) {
+          send({ type: "safety", urgent: profile.urgent });
+        }
+
         stage = "pipeline";
         for await (const event of runMatchLoop(profile)) {
           send(event);
