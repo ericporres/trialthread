@@ -1,33 +1,25 @@
 import { safeErr } from "@/lib/anthropic";
 import { extractProfile } from "@/lib/extract";
 import { runMatchLoop } from "@/lib/loop";
+import { checkLimits, acquire, release, limiterMode } from "@/lib/ratelimit";
 import type { StreamEvent } from "@/lib/types";
 
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
-// Best-effort per-instance throttle (serverless instances are ephemeral;
-// this is a speed bump, not a wall).
-const recent = new Map<string, number[]>();
-const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 4;
-
-function throttled(ip: string): boolean {
-  const now = Date.now();
-  const hits = (recent.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  hits.push(now);
-  recent.set(ip, hits);
-  if (recent.size > 5000) recent.clear();
-  return hits.length > MAX_PER_WINDOW;
-}
+// Surface the limiter's real strength in the logs at cold start, so the gap
+// between "we have a limiter" and "the limiter is durable" is visible in
+// production rather than only in a comment. See lib/ratelimit.ts.
+console.log("tt_limiter", limiterMode());
 
 export async function POST(req: Request): Promise<Response> {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (throttled(ip)) {
-    return Response.json(
-      { error: "Too many searches in a row. Please wait a minute and try again." },
-      { status: 429 }
-    );
+  // Denial-of-wallet gate. Every search costs ~$0.21 against a hard-capped
+  // prepaid balance with auto-reload OFF — so a drain is not a surprise bill,
+  // it is an OUTAGE, and the people who hit a dead site are cancer patients.
+  const gate = checkLimits(req);
+  if (!gate.ok) {
+    console.log("tt_throttled", gate.reason);
+    return Response.json({ error: gate.message }, { status: gate.status });
   }
 
   let body: { description?: string };
@@ -49,6 +41,20 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const encoder = new TextEncoder();
+
+  // Concurrency slot. MUST be released on every exit path — a leaked slot is a
+  // permanent one-fifth reduction in capacity, and enough leaks turn the
+  // limiter into the outage it was built to prevent. Released in `finally`, and
+  // again in `cancel()` for the case where the patient closes the tab mid-search
+  // (which, at ~57s a search, is not rare).
+  acquire();
+  let released = false;
+  const releaseOnce = () => {
+    if (!released) {
+      released = true;
+      release();
+    }
+  };
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -111,8 +117,14 @@ export async function POST(req: Request): Promise<Response> {
             "Something went wrong during the search — usually a brief hiccup on our side or at clinicaltrials.gov. Please try again in a moment.",
         });
       } finally {
+        releaseOnce();
         controller.close();
       }
+    },
+    // The patient closed the tab / lost signal mid-search. Without this the
+    // concurrency slot never comes back.
+    cancel() {
+      releaseOnce();
     },
   });
 

@@ -47,7 +47,7 @@ Full audit findings, including the raw transcripts: `audit/` in the project work
 | `/about` | Why this exists, and the three promises |
 | `/faq` | **The vetting page.** Is it legitimate, who built it, is it affiliated with anyone, what happens to what you type, and what it has *not* been validated to do |
 | `/privacy` | The complete data path, said one subclaim at a time |
-| `/security` | Private vulnerability disclosure |
+| `/security` | **Public page**, explaining how to report a vulnerability **privately**. The page is deliberately public — a security contact nobody can find is not a security contact. The *reporting channel* is private (GitHub advisories; a reveal-on-click address that never appears in scrapeable HTML). |
 | `/llms.txt`, `/llms-full.txt` | Machine-readable index and full text |
 | `/robots.txt`, `/sitemap.xml` | Crawl directives |
 | `/.well-known/security.txt` | RFC 9116 |
