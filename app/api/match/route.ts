@@ -16,7 +16,7 @@ export async function POST(req: Request): Promise<Response> {
   // Denial-of-wallet gate. Every search costs ~$0.21 against a hard-capped
   // prepaid balance with auto-reload OFF — so a drain is not a surprise bill,
   // it is an OUTAGE, and the people who hit a dead site are cancer patients.
-  const gate = checkLimits(req);
+  const gate = await checkLimits(req);
   if (!gate.ok) {
     console.log("tt_throttled", gate.reason);
     return Response.json({ error: gate.message }, { status: gate.status });
