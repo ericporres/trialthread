@@ -1,0 +1,33 @@
+# TrialThread — security contact
+# https://www.trialthread.org/.well-known/security.txt
+# Format: RFC 9116
+
+# WHY THERE IS NO EMAIL ADDRESS IN THIS FILE:
+# security.txt is a machine-readable file at a well-known path. Any plain
+# mailto: published here is harvested by scrapers within days. So the intake
+# channel is GitHub's private vulnerability reporting — authenticated, private,
+# threaded, and free. A reveal-on-click email fallback, for researchers without
+# a GitHub account, lives on the page linked under Policy.
+
+Contact: https://github.com/ericporres/trialthread/security/advisories/new
+Contact: https://www.trialthread.org/security
+Expires: 2027-07-14T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://www.trialthread.org/.well-known/security.txt
+Policy: https://www.trialthread.org/security
+
+# TrialThread is a stateless application. It holds no patient database and no
+# user accounts — so the interesting attack surface is not "the data at rest."
+# There isn't any. It is:
+#
+#   - the Anthropic API key
+#   - denial-of-wallet against a small, hard-capped inference budget
+#   - prompt injection, via pasted text or via registry content
+#   - the INTEGRITY of what a patient is told about a trial
+#
+# That last one is the only one that could actually hurt somebody. Please weight
+# it accordingly.
+#
+# Never include real patient information in a report, through any channel.
+# No bug bounty — this is a free, unfunded, public-interest project. Credit is
+# offered gladly.

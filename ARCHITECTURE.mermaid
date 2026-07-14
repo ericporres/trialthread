@@ -2,8 +2,14 @@ flowchart TD
     U[Patient / caregiver\nfree-text description] --> UI[Next.js single page\napp/page.tsx]
     UI -->|POST /api/match| API[Streaming route\napp/api/match/route.ts\nNDJSON events]
 
-    API --> EX[Extraction\nlib/extract.ts\nClaude Sonnet → PatientProfile\nincl. LLM city-level geocode]
-    EX --> LOOP[Karpathy loop\nlib/loop.ts\nsearch → score → assess → broaden]
+    API --> EX[Extraction\nlib/extract.ts\nClaude Sonnet → PatientProfile\nincl. LLM city-level geocode\n+ urgent safety signals]
+
+    EX --> SAFE{profile.urgent\nnon-empty?}
+    SAFE -->|yes| BANNER[stream: safety event\nBEFORE the search runs\n→ non-dismissible banner\n988 / 911]
+    BANNER --> LOOP
+    SAFE -->|no| LOOP
+
+    LOOP[Karpathy loop\nlib/loop.ts\nsearch → score → assess → broaden]
 
     LOOP -->|query.cond + filter.geo + RECRUITING| CTG[(clinicaltrials.gov\nAPI v2 — live, no key)]
     CTG --> NORM[Normalize + haversine distances\nlib/ctgov.ts]
@@ -15,12 +21,21 @@ flowchart TD
     DEEP --> RANK[Rank: verdict → triage score → distance]
     RANK -->|stream: results| UI
 
-    subgraph Stateless by design
+    subgraph SG[Stateless by design]
         API
         EX
         LOOP
     end
 
+    subgraph GATES[Release gates — eval/run-eval.mjs]
+        G1[Every NCT ID resolves\nAND is RECRUITING]
+        G2[No second-person\neligibility language]
+        G3[Safety banner fires on crisis\nAND stays silent otherwise]
+    end
+
     style CTG fill:#eaf4f2,stroke:#0e7c6e
     style DEEP fill:#eaf4f2,stroke:#0e7c6e
     style U fill:#faf3e3,stroke:#e8d5a4
+    style BANNER fill:#faf3e3,stroke:#7a5c11,stroke-width:2px
+    style SAFE fill:#faf3e3,stroke:#e8d5a4
+    style GATES fill:#f4f2ee,stroke:#c9c3b8

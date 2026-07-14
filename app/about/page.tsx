@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteFooter } from "../site-footer";
 
 export const metadata: Metadata = {
   title: "About — TrialThread",
@@ -108,17 +109,7 @@ export default function About() {
         listing is always authoritative. Only a trial&rsquo;s study team can determine
         eligibility. Always discuss any trial with your treating physician.
       </div>
-      <footer className="site">
-        <Link href="/">← Back to the search</Link> ·{" "}
-        <a href="https://github.com/sponsors/ericporres" target="_blank" rel="noreferrer">
-          Support TrialThread ♥
-        </a>{" "}
-        · Data:{" "}
-        <a href="https://clinicaltrials.gov" target="_blank" rel="noreferrer">
-          ClinicalTrials.gov
-        </a>{" "}
-        · © {new Date().getFullYear()} TrialThread
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

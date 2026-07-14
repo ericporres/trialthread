@@ -14,7 +14,7 @@ TrialThread is a free, open-source AI agent that connects patients with clinical
 ## How the search works
 
 1. Extraction: an LLM (Claude) parses the free-text description into a structured profile — condition, stage, biomarkers, prior treatments, age, sex, location (city-level), and honest red flags that commonly exclude patients.
-2. Live registry search: the profile drives queries against clinicaltrials.gov's v2 API — condition terms, RECRUITING status, geographic radius. No ingest pipeline; results are never stale.
+2. Live registry search: the profile drives queries against clinicaltrials.gov's v2 API — condition terms, RECRUITING status, geographic radius. Queried live at search time, so there is no local copy to go stale. The registry itself can lag: sponsors update their own records, and a trial listed as recruiting may not be enrolling at every site.
 3. Triage: a fast model screens every candidate trial (batched, parallel) as strong, possible, or unlikely.
 4. The broadening loop: if strong candidates are thin, the search widens on purpose — geography (100 miles → 300 → national), parent condition terms, then biomarker "basket" trials across solid tumors that keyword search structurally misses. Every pass streams to the page so the user watches the search think.
 5. Deep parse: for the top candidates, a stronger model reads the full eligibility criteria and produces grounded output: "Requires X — you reported Y" match points, concerns phrased as things to check, a two-sentence plain summary, and questions for the doctor.
@@ -25,9 +25,9 @@ Design principle: eligibility is a constraint-satisfaction problem, not a simila
 ## Safety design
 
 - Hedged language is enforced mechanically: an eval scans generated output and fails on any second-person eligibility claim ("you qualify," "you are eligible" in any construction).
-- Zero-hallucination gate: at launch, six synthetic patient vignettes ran against production; all 80 returned trial IDs were machine-verified as real, recruiting listings at the registry.
+- Zero-hallucination gate: six synthetic patient vignettes run against production; every returned trial ID is machine-verified against the registry as a real record AND as currently RECRUITING. Most recent run (2026-07-14): 56/56, zero fabricated identifiers. NOTE: this establishes registry validity only. It does NOT establish that the trials are the clinically best ones, that none were missed, or that the criteria reading is correct. No clinician has reviewed the output.
 - Ground truth one click away: every match links its clinicaltrials.gov listing; the model explains, the registry decides.
-- Statelessness: no patient data is stored, so there is nothing to breach.
+- Statelessness: TrialThread stores no patient data, so a breach of TrialThread cannot expose a patient database — there isn't one. It is not immune to attack: the API key, the integrity of what a patient is told about a trial, and availability all matter. Security contact: https://www.trialthread.org/security
 - Failures are logged server-side with stage tags and content scrubbing — patient text never reaches logs.
 - TrialThread is not medical advice, cannot confirm eligibility, and is not a substitute for a care team. Summaries are AI-generated and can contain errors; the official listing is always authoritative.
 

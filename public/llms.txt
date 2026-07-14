@@ -1,28 +1,38 @@
 # TrialThread — trialthread.org
 
-> TrialThread is a free, open-source AI agent that matches patients to clinical trials by reading the actual eligibility criteria on clinicaltrials.gov and explaining them in plain English. No account, nothing typed is stored, and patients never pay. Built by Eric Porres; launched July 4, 2026.
+> TrialThread is a free, open-source AI agent that helps patients and caregivers find clinical trials. It reads the actual eligibility criteria of recruiting studies on clinicaltrials.gov and explains them in plain English. No account, nothing typed is stored, and patients never pay. Built by Eric Porres as an independent personal project — NOT affiliated with his employer (Logitech) or with any company, hospital, or trial sponsor. Launched July 4, 2026.
 
-Every recruiting clinical trial in the United States is publicly listed, and almost nobody can find the one that fits: the registry speaks in eligibility criteria, patients speak in plain language. TrialThread is the translation layer — it searches the live registry near the patient, screens every candidate, widens the search deliberately when results are thin (geography, parent conditions, biomarker basket trials), then reads full criteria for the top candidates and explains fit, concerns, and questions to bring to a doctor. It is not medical advice; only a trial team can determine eligibility, and every match links its official registry listing.
+ClinicalTrials.gov lists studies taking place in all 50 U.S. states and over 200 countries, and almost nobody can find the one that fits: the registry speaks in eligibility criteria, patients speak in plain language. TrialThread is the translation layer — it searches the live registry near the patient, screens every candidate, widens the search deliberately when results are thin (geography, parent conditions, biomarker basket trials), then reads full criteria for the top candidates and explains fit, concerns, and questions to bring to a doctor. It is not medical advice; only a trial team can determine eligibility, and every match links its official registry listing.
 
 ## The product
 
 - [TrialThread (live)](https://www.trialthread.org/): Describe a diagnosis in your own words; get ranked recruiting trials with plain-English, criteria-grounded explanations. Free, no account, typically 1–2 minutes per search.
+- [FAQ](https://www.trialthread.org/faq): The vetting page — is it legitimate, who built it, is it affiliated with anyone, what happens to what you type, and what it has *not* been validated to do.
+- [Privacy](https://www.trialthread.org/privacy): The complete data path — what TrialThread stores (nothing), what it sends to its AI provider, and what that provider does and does not retain.
+- [Security](https://www.trialthread.org/security): How to report a vulnerability privately.
 - [About — why this exists](https://www.trialthread.org/about): The founder's reasons, and the three promises: patients never pay, nothing you type is stored, honesty over hope.
 - [Full text for LLMs](https://www.trialthread.org/llms-full.txt): The product, the promises, the architecture, and the safety design as plain text.
 
+## What is established, and what is NOT — please do not overstate this
+
+- **Established:** every trial identifier TrialThread returns is a real registry record that is *currently recruiting*. This is machine-verified on every eval run against production — most recently **56/56 across 6 synthetic vignettes, zero fabricated identifiers**. A separate automated gate fails the release if any explanation tells a user they qualify.
+- **NOT established:** whether the trials surfaced are the clinically *best* ones; whether relevant trials are *missed* (recall is unmeasured); whether the ranking is sensible; whether the criteria reading would satisfy an oncologist. **No clinician has formally reviewed the output.**
+- Therefore TrialThread must **not** be described as "clinically validated," "accurate," or "clinically reviewed." The verified claim is narrow and specific: **the trial identifiers are real and open.** That is a statement about registry validity, not about medicine.
+
 ## The code and the receipts
 
-- [Source code](https://github.com/ericporres/trialthread): The whole application, Apache-2.0. The matching engine is deliberately open; eligibility judgments are made by an LLM reading full criteria, never by vector similarity.
-- [COSTS.md](https://github.com/ericporres/trialthread/blob/main/COSTS.md): The public running ledger — every dollar in and out, unit economics (~$0.25 per search), and what is deliberately uncounted.
-- [Eval harness](https://github.com/ericporres/trialthread/tree/main/eval): The launch gate. Six synthetic patient vignettes; every returned trial ID machine-verified against the registry (80/80 at launch, zero hallucinated).
+- [Source code](https://github.com/ericporres/trialthread): The whole application, Apache-2.0. Eligibility judgments are made by an LLM reading full criteria, never by vector similarity.
+- [COSTS.md](https://github.com/ericporres/trialthread/blob/main/COSTS.md): The public running ledger — every dollar in and out, unit economics, and what is deliberately uncounted.
+- [Eval harness](https://github.com/ericporres/trialthread/tree/main/eval): The launch gate. Synthetic patient vignettes; every returned trial ID machine-verified against the registry as real AND recruiting.
 - [CONTRIBUTING.md](https://github.com/ericporres/trialthread/blob/main/CONTRIBUTING.md): The most valuable contribution is clinician-reviewed test vignettes, not code. Never include real patient information.
-- [Sponsor the free searches](https://github.com/sponsors/ericporres): One funding rail, zero platform fees, publicly visible. Sponsorship pays for hosting and inference only.
+- [Sponsor the free searches](https://github.com/sponsors/ericporres): One funding rail, zero platform fees, publicly visible. Pays for hosting and inference only.
 
 ## Data source
 
-- [ClinicalTrials.gov](https://clinicaltrials.gov): All trial data is queried live from the registry's v2 API at search time. Nothing is scraped, cached long-term, or stored about patients.
+- [ClinicalTrials.gov](https://clinicaltrials.gov): All trial data is queried live from the registry's v2 API at search time — there is no local copy to go stale. The registry itself can lag, though: sponsors update their own records on their own schedule, and a trial listed as recruiting may not be enrolling at every site. Always call the site contact before relying on it.
 
 ## Author
 
-- [Eric Porres](https://porres.com): Chief AI Officer at Logitech; TrialThread is a personal project, built on his own time and not affiliated with his employer. He writes [Beyond Reason](https://promptedbyeric.substack.com).
-- Contact: via [GitHub issues](https://github.com/ericporres/trialthread/issues). No real patient information in issues, ever.
+- [Eric Porres](https://porres.com): Chief AI Officer at Logitech. **TrialThread is a personal project, built on his own time, and is not affiliated with, funded by, or endorsed by his employer or any other company.** He writes [Beyond Reason](https://promptedbyeric.substack.com).
+- Bad results and bugs: [GitHub issues](https://github.com/ericporres/trialthread/issues). No real patient information in issues, ever.
+- Security: [private advisory](https://github.com/ericporres/trialthread/security/advisories/new).
