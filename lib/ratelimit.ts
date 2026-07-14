@@ -47,8 +47,51 @@
  * phone, without a deploy.
  */
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+/**
+ * Resolve the REST endpoint + token from whichever env-var names the Vercel /
+ * Upstash integration actually produced.
+ *
+ * WHY THIS IS A RESOLVER AND NOT TWO CONSTANTS: the marketplace "Connect"
+ * dialog has a Custom Prefix field, and the native-Upstash vs Vercel-KV flows
+ * emit DIFFERENT names (`UPSTASH_REDIS_REST_*` vs `KV_REST_API_*`). If the code
+ * hard-coded one name and the integration wrote the other, the store would
+ * connect to nothing — and because the limiter FAILS OPEN, nobody would notice.
+ * "Protected but actually isn't" is the worst state, so we accept the known
+ * variants and, as a backstop, sniff any *REST*URL / *REST*TOKEN pair.
+ *
+ * We take ONLY the REST (https) URL — never the redis:// connection string,
+ * which the fetch-based calls below cannot use.
+ */
+function pickUrl(): string | undefined {
+  const known = [
+    process.env.UPSTASH_REDIS_REST_URL,
+    process.env.KV_REST_API_URL,
+    process.env.STORAGE_REST_API_URL,
+    process.env.REDIS_REST_API_URL,
+  ].find((v) => v?.startsWith("https://"));
+  if (known) return known;
+  // Backstop: any env var that looks like a REST URL for a KV/Redis store.
+  for (const [k, v] of Object.entries(process.env)) {
+    if (v?.startsWith("https://") && /REST.*URL$/i.test(k) && /(KV|REDIS|UPSTASH|STORAGE)/i.test(k)) return v;
+  }
+  return undefined;
+}
+function pickToken(): string | undefined {
+  const known = [
+    process.env.UPSTASH_REDIS_REST_TOKEN,
+    process.env.KV_REST_API_TOKEN,
+    process.env.STORAGE_REST_API_TOKEN,
+    process.env.REDIS_REST_API_TOKEN,
+  ].find(Boolean);
+  if (known) return known;
+  for (const [k, v] of Object.entries(process.env)) {
+    if (v && /REST.*TOKEN$/i.test(k) && /(KV|REDIS|UPSTASH|STORAGE)/i.test(k) && !/READ_ONLY/i.test(k)) return v;
+  }
+  return undefined;
+}
+
+const REDIS_URL = pickUrl();
+const REDIS_TOKEN = pickToken();
 const HAS_SHARED_STORE = Boolean(REDIS_URL && REDIS_TOKEN);
 
 // ── budgets ────────────────────────────────────────────────────────────────
