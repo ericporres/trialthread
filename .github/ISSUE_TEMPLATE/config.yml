@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/ericporres/trialthread/security/advisories/new
+    about: Please report security issues privately here, never as a public issue. See /security on the site for details.
+  - name: Contribute a test vignette in prose
+    url: https://github.com/ericporres/trialthread/blob/main/CONTRIBUTING.md
+    about: Not a GitHub person? You can send a synthetic case in plain language instead — CONTRIBUTING explains how.

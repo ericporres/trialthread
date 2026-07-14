@@ -28,7 +28,7 @@ const results = [];
 
 for (const v of vignettes) {
   const t0 = Date.now();
-  const r = { id: v.id, ok: false, latencyS: null, passes: 0, considered: 0, matches: 0, verdicts: {}, nctIds: [], nctLive: null, nctRecruiting: null, notRecruiting: [], hedgingViolations: [], safetyKinds: [], safetyViolation: null, errors: [] };
+  const r = { id: v.id, ok: false, latencyS: null, passes: 0, considered: 0, matches: 0, verdicts: {}, nctIds: [], nctLive: null, nctRecruiting: null, notRecruiting: [], hedgingViolations: [], safetyKinds: [], safetyViolation: null, surfaceMisses: [], excludeHits: [], surfaceOk: true, excludeOk: true, errors: [] };
   try {
     const res = await fetch(`${BASE}/api/match`, {
       method: "POST",
@@ -81,14 +81,24 @@ for (const v of vignettes) {
     let live = 0;
     let recruiting = 0;
     const notRecruiting = [];
+    // Per-trial "haystack" (brief title + intervention names, lowercased) for the
+    // shouldSurface / shouldExclude assertions below. Sourced from the registry
+    // record itself, not from our own stream — so "did a T-DXd trial actually
+    // surface?" is checked against ClinicalTrials.gov, the authority, not against
+    // the output we are trying to grade.
+    const hays = [];
     for (const id of r.nctIds) {
-      const check = await fetch(`https://clinicaltrials.gov/api/v2/studies/${id}?fields=protocolSection.identificationModule.nctId,protocolSection.statusModule.overallStatus`);
+      const check = await fetch(`https://clinicaltrials.gov/api/v2/studies/${id}?fields=protocolSection.identificationModule.nctId,protocolSection.identificationModule.briefTitle,protocolSection.statusModule.overallStatus,protocolSection.armsInterventionsModule.interventions`);
       if (check.ok) {
         live++;
         const study = await check.json();
-        const status = study?.protocolSection?.statusModule?.overallStatus;
+        const ps = study?.protocolSection ?? {};
+        const status = ps.statusModule?.overallStatus;
         if (status === "RECRUITING") recruiting++;
         else notRecruiting.push(`${id}:${status ?? "UNKNOWN"}`);
+        const title = ps.identificationModule?.briefTitle ?? "";
+        const ivs = (ps.armsInterventionsModule?.interventions ?? []).map((i) => i.name).join(" ");
+        hays.push({ nctId: id, hay: `${title} ${ivs}`.toLowerCase() });
       }
       await new Promise((s) => setTimeout(s, 150)); // polite
     }
@@ -118,19 +128,49 @@ for (const v of vignettes) {
       }
     }
 
+    // ── SURFACE / EXCLUDE ASSERTIONS ────────────────────────────────────────
+    // The one gate a model cannot self-certify: did the trials a clinician says
+    // SHOULD appear actually appear, and did the ones that should NOT stay out?
+    // Grounded in ctgov title+interventions (see `hays`). Optional per vignette —
+    // vignettes without these fields are unaffected. `shouldSurface` is a list of
+    // token-groups; a group passes if ANY returned trial contains ANY of its
+    // tokens. `minSurface` (default: every group) sets how many groups must hit,
+    // giving tolerance for day-to-day registry churn without letting a real
+    // recall regression through. `shouldExclude` fails if any returned trial
+    // matches — intervention/title level, not eligibility-criteria level (a
+    // documented v1 limit).
+    const inAny = (g) => hays.some((h) => g.any.some((tok) => h.hay.includes(tok.toLowerCase())));
+    if (Array.isArray(v.expect.shouldSurface)) {
+      r.surfaceMisses = v.expect.shouldSurface.filter((g) => !inAny(g)).map((g) => g.label);
+      const hit = v.expect.shouldSurface.length - r.surfaceMisses.length;
+      const need = v.expect.minSurface ?? v.expect.shouldSurface.length;
+      r.surfaceOk = hit >= need;
+    }
+    if (Array.isArray(v.expect.shouldExclude)) {
+      for (const h of hays)
+        for (const g of v.expect.shouldExclude)
+          if (g.any.some((tok) => h.hay.includes(tok.toLowerCase()))) r.excludeHits.push(`${h.nctId}:${g.label}`);
+      r.excludeOk = r.excludeHits.length === 0;
+    }
+    if (process.env.EVAL_DEBUG && (r.surfaceMisses.length || v.expect.shouldSurface)) {
+      for (const h of hays) console.log(`   ↳ ${h.nctId}: ${h.hay.slice(0, 140)}`);
+    }
+
     r.ok =
       r.errors.length === 0 &&
       r.matches >= (v.expect.minMatches ?? 1) &&
       live === r.nctIds.length &&
       recruiting === r.nctIds.length &&
       r.hedgingViolations.length === 0 &&
+      r.surfaceOk &&
+      r.excludeOk &&
       !r.safetyViolation;
   } catch (e) {
     r.errors.push(String(e));
     r.latencyS = Math.round((Date.now() - t0) / 10) / 100;
   }
   results.push(r);
-  console.log(`${r.ok ? "PASS" : "FAIL"}  ${v.id}  ${r.latencyS}s  matches=${r.matches} passes=${r.passes} considered=${r.considered} nctLive=${r.nctLive} nctRecruiting=${r.nctRecruiting} safety=[${r.safetyKinds.join(",")}] verdicts=${JSON.stringify(r.verdicts)}${r.notRecruiting?.length ? " NOT_RECRUITING=" + r.notRecruiting.join("|") : ""}${r.errors.length ? " ERRORS=" + r.errors.join("|") : ""}${r.hedgingViolations.length ? " HEDGING=" + r.hedgingViolations.join("|") : ""}${r.safetyViolation ? " 🔴 SAFETY=" + r.safetyViolation : ""}`);
+  console.log(`${r.ok ? "PASS" : "FAIL"}  ${v.id}  ${r.latencyS}s  matches=${r.matches} passes=${r.passes} considered=${r.considered} nctLive=${r.nctLive} nctRecruiting=${r.nctRecruiting} safety=[${r.safetyKinds.join(",")}] verdicts=${JSON.stringify(r.verdicts)}${r.notRecruiting?.length ? " NOT_RECRUITING=" + r.notRecruiting.join("|") : ""}${r.errors.length ? " ERRORS=" + r.errors.join("|") : ""}${r.hedgingViolations.length ? " HEDGING=" + r.hedgingViolations.join("|") : ""}${r.safetyViolation ? " 🔴 SAFETY=" + r.safetyViolation : ""}${r.surfaceMisses?.length ? " SURFACE_MISS=" + r.surfaceMisses.join("|") : ""}${r.excludeHits?.length ? " EXCLUDE_HIT=" + r.excludeHits.join("|") : ""}`);
   // Respect the 4/min rate limit between runs.
   await new Promise((s) => setTimeout(s, 20000));
 }

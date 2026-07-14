@@ -4,7 +4,12 @@
     "description": "My mother is 58, diagnosed with HER2-positive metastatic breast cancer that has spread to her liver. She's been on trastuzumab and taxane chemo. ER-negative. She lives near White Plains, NY and is still active and independent.",
     "expect": {
       "minMatches": 3,
-      "note": "Verified live 2026-07-04: 36 trials pass 1, T-DXd/tucatinib/ADC family expected"
+      "shouldSurface": [
+        { "label": "HER2 ADC (T-DXd family)", "any": ["trastuzumab deruxtecan", "t-dxd", "ds-8201", "enhertu", "trastuzumab emtansine", "kadcyla", "t-dm1", "datopotamab", "disitamab", "trastuzumab duocarmazine"] },
+        { "label": "tucatinib-based", "any": ["tucatinib", "tukysa"] }
+      ],
+      "minSurface": 1,
+      "note": "shouldSurface asserts a MODERN HER2-targeted option surfaces for 2nd-line HER2+ MBC — a T-DXd-class ADC or a tucatinib-based regimen. An earlier broad 'any HER2-directed' group was dropped as near-tautological (a HER2 condition search always returns HER2 trials); the point is to catch a collapse of the modern options specifically. Both groups hit on 2026-07-14 (T-DXd: NCT07137416; tucatinib: NCT05748834). minSurface 1 keeps a churn margin; a reviewing clinician can raise it to 2."
     }
   },
   {
@@ -12,7 +17,12 @@
     "description": "I'm a 64-year-old man with stage IV non-small cell lung cancer, EGFR exon 19 deletion. Osimertinib stopped working after 18 months. No brain metastases as of my last scan. I live in Stamford, Connecticut.",
     "expect": {
       "minMatches": 3,
-      "note": "Post-osimertinib EGFR space is trial-dense; amivantamab combos, ADCs, 4th-gen EGFR TKIs"
+      "shouldSurface": [
+        { "label": "post-osimertinib targeted agent", "any": ["amivantamab", "rybrevant", "lazertinib", "furmonertinib", "sunvozertinib", "zipalertinib", "befotertinib", "quaratusugene"] },
+        { "label": "post-EGFR ADC", "any": ["datopotamab", "dato-dxd", "patritumab deruxtecan", "her3-dxd", "telisotuzumab", "trastuzumab deruxtecan"] }
+      ],
+      "minSurface": 1,
+      "note": "Post-osimertinib EGFR space is trial-dense (amivantamab, 4th-gen/high-dose TKIs, HER3/TROP2 ADCs). shouldSurface asserts a resistance-setting targeted agent OR a relevant ADC appears — bare 'egfr'/'osimertinib' tokens were removed as tautological for an EGFR condition search. Both groups hit on 2026-07-14 (furmonertinib: NCT06652048; dato-dxd: NCT07535437). minSurface 1 for churn margin. Ties to F-016: rich clinician input currently collapses recall here — once fixed, raise minSurface to guard it."
     }
   },
   {
@@ -28,7 +38,13 @@
     "description": "I am 52 and have diffuse large B-cell lymphoma that came back eight months after R-CHOP. My doctor mentioned CAR-T but I want to know all my options. I live in Boston.",
     "expect": {
       "minMatches": 3,
-      "note": "Heme path: CAR-T, bispecifics, ADCs; tests non-solid-tumor registry patterns"
+      "shouldSurface": [
+        { "label": "CD19 CAR-T", "any": ["axicabtagene", "axi-cel", "yescarta", "lisocabtagene", "liso-cel", "breyanzi", "tisagenlecleucel", "kymriah", "car-t", "car t", "chimeric antigen receptor"] },
+        { "label": "bispecific (CD20xCD3)", "any": ["glofitamab", "columvi", "epcoritamab", "epkinly", "mosunetuzumab", "lunsumio", "odronextamab", "bispecific"] },
+        { "label": "CD79b/CD19 ADC", "any": ["polatuzumab", "polivy", "loncastuximab", "zynlonta"] }
+      ],
+      "minSurface": 1,
+      "note": "Relapsed DLBCL post-R-CHOP: CAR-T, CD20xCD3 bispecifics, ADCs. shouldSurface asserts at least one of those modern classes appears; minSurface 1. Also tests non-solid-tumor registry patterns."
     }
   },
   {

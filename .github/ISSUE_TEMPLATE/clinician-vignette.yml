@@ -1,0 +1,68 @@
+name: Clinician test vignette
+description: Propose a synthetic patient case and say what a correct result looks like. No coding, no fork, no eval — a maintainer wires it in and credits you.
+title: "[Vignette] <tumor type / setting>"
+labels: ["vignette", "clinician-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. A single reviewed vignette becomes a permanent gate the whole system is measured against on every future change — it is the most valuable contribution here, worth more than code.
+
+        **Synthetic patients only.** Never include real patient information, yours or anyone's. Use a made-up or fully de-identified composite case. Anything resembling a real person will be closed without merge.
+  - type: input
+    id: setting
+    attributes:
+      label: Tumor type / clinical setting
+      placeholder: "e.g., HER2+ metastatic breast cancer, second line"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Synthetic patient description (as a caregiver or patient would type it)
+      description: Plain language, the way someone frightened and non-technical would write it. This exact text is what the tool will be given.
+      placeholder: "My mother is 58, HER2-positive metastatic breast cancer that spread to her liver, on trastuzumab and taxane, ER-negative, near White Plains NY."
+    validations:
+      required: true
+  - type: textarea
+    id: should-surface
+    attributes:
+      label: What SHOULD surface
+      description: Trials, drugs, or drug classes a good result should include. Name brands, generics, or classes — that is exactly what makes it checkable.
+      placeholder: |
+        - T-DXd-class ADCs (trastuzumab deruxtecan / Enhertu)
+        - tucatinib-based regimens
+    validations:
+      required: true
+  - type: textarea
+    id: should-exclude
+    attributes:
+      label: What should NOT surface (optional)
+      description: Trials or classes that would be wrong for this patient, if any.
+      placeholder: |
+        - first-line-only trials that exclude prior trastuzumab
+        - data-collection registries presented as the treatment answer
+    validations:
+      required: false
+  - type: textarea
+    id: must-caution
+    attributes:
+      label: What the tool MUST caution about (optional)
+      placeholder: "visceral-crisis exclusions given liver metastases"
+    validations:
+      required: false
+  - type: input
+    id: reviewer
+    attributes:
+      label: Credit line — how you'd like to be attributed on the vignette
+      description: Initials or name plus role and month. Goes into the vignette's note field and your contributor credit. Leave blank to stay anonymous.
+      placeholder: "L.A., thoracic medical oncologist, 2026-07"
+    validations:
+      required: false
+  - type: checkboxes
+    id: attest
+    attributes:
+      label: Confirmation
+      options:
+        - label: This case is synthetic or a fully de-identified composite. It contains no real patient information.
+          required: true
