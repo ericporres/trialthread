@@ -21,13 +21,21 @@ TrialThread is free for patients, forever. Free means someone pays the infrastru
 | 2026-07-07 | Second ledger check: key cost $12.15 total → $8.60 organic after dev/eval spend ≈ **34 patient searches all-time** (+$4.97 / ~20 since the 7/5 check) | $4.97 |
 | 2026-07-14 | Third ledger check, **before** the Phase 4 audit run: key cost **$19.63** total (includes the 6-vignette eval re-run against the new RECRUITING gate) | $7.48 |
 | 2026-07-14 | **Adversarial audit — safety spend, not patient spend.** 20-case Phase 4 suite: crisis cues, prompt injection, contradictions, privacy traps, geography, pediatric, pregnancy, rare disease, over-specified clinical narrative. Read straight off the Console: **$23.86 − $19.63.** | **$4.23** |
+| 2026-07-14 | **Post-deploy release gate.** The 9-vignette eval re-run against production after the crisis fix shipped — 6 clinical + 3 safety (self-harm, medical emergency, and a false-positive guard). All 9 passed. **$26.29 − $23.86.** | **$2.43** |
 
-**API credit runway:** $100 funded − **$23.86** spent = **$76.14 remaining** ≈ 360 searches at the measured rate.
+**API credit runway:** $100 funded − **$26.29** spent = **$73.71 remaining** ≈ 350 searches at the measured rate.
 The dedicated key's Cost column is TrialThread's exact all-time spend, so runway is always $100 minus that number. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
 
 ### The cleanest unit-cost measurement this project has
 
-The Phase 4 line is a **20-search block with a known start and end balance and nothing else running against the key.** That makes it the most precise cost-per-search number in this file:
+Two clean blocks on the same day, each with a known start and end balance and nothing else running against the key:
+
+> **Phase 4:** $4.23 ÷ 20 searches = **$0.2115/search**
+> **Release gate:** $2.43 ÷ 9 vignettes = **$0.27/search**
+
+The release-gate number is higher because three of those nine vignettes are the new safety cases, and two of them broaden hard (the medical-emergency case screened 144 trials, the false-positive guard 133). **Cost tracks candidate volume**, which is exactly what these two numbers, read together, demonstrate. Blended across all 29 searches: **$6.66 ÷ 29 = $0.23/search** — still inside the published band.
+
+Taking the larger and less adversarial sample as the headline:
 
 > **$4.23 ÷ 20 searches = $0.2115 per search.**
 

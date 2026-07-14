@@ -56,6 +56,21 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
   },
+
+  // Google Search Console — URL-prefix property verification via HTML tag.
+  // Renders: <meta name="google-site-verification" content="..." />
+  //
+  // This is a PUBLIC verification token, not a secret — it proves control of the
+  // site and nothing more. Safe in the repo, and it belongs there: a token that
+  // lives only in someone's browser tab gets lost, and then verification silently
+  // lapses months later when nobody remembers why.
+  //
+  // Note the shape difference that trips people up: the DNS TXT record wants the
+  // full `google-site-verification=TOKEN` string, but the meta tag wants ONLY the
+  // token. Same token, two encodings.
+  verification: {
+    google: "_Pb3k_VGnCiDSQHy83M_-69WEarS4CXfIpQuFiusw9E",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
