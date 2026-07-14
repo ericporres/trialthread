@@ -97,7 +97,18 @@ export default function About() {
         <p className="signoff">
           — Eric Porres, New York
           <br />
-          <a href="https://promptedbyeric.substack.com" target="_blank" rel="noreferrer">
+          {/* Points at the Beyond Reason piece about building this, not the
+              publication root. Canonical URL, not the open.substack.com share
+              link: that one carries ?r= and utm_campaign=post-expanded-share,
+              which would tag every visitor arriving from this page as having
+              come through Eric's own share widget — and quietly poison the
+              referrer data we would otherwise use to learn how people find
+              TrialThread. Same article, clean address. */}
+          <a
+            href="https://promptedbyeric.substack.com/p/i-built-a-clinical-trial-finder-in-24-hours-trialthread"
+            target="_blank"
+            rel="noreferrer"
+          >
             I write about AI systems at Beyond Reason
           </a>
         </p>
