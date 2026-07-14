@@ -23,7 +23,27 @@ TrialThread is free for patients, forever. Free means someone pays the infrastru
 | 2026-07-14 | **Adversarial audit — safety spend, not patient spend.** 20-case Phase 4 suite: crisis cues, prompt injection, contradictions, privacy traps, geography, pediatric, pregnancy, rare disease, over-specified clinical narrative. Read straight off the Console: **$23.86 − $19.63.** | **$4.23** |
 | 2026-07-14 | **Post-deploy release gate.** The 9-vignette eval re-run against production after the crisis fix shipped — 6 clinical + 3 safety (self-harm, medical emergency, and a false-positive guard). All 9 passed. **$26.29 − $23.86.** | **$2.43** |
 
-**API credit runway:** $100 funded − **$26.29** spent = **$73.71 remaining** ≈ 350 searches at the measured rate.
+## Monthly spend — the source of truth
+
+Updated automatically every Sunday from the Console cost page for the dedicated
+`trial-thread-vercel` key (which serves only this product, so its spend *is*
+TrialThread's spend).
+
+**Why a table of months rather than one running total:** the Console cost view is
+a *range*, it defaults to month-to-date, and it **resets at every month
+boundary**. A script reading "the total" would have worked all through July and
+then, on 1 August, read ~$0.00 and concluded spending had gone backwards. So the
+ledger records each month and sums them. Month-to-date only ever grows *within*
+its own month — which is what makes the sanity checks meaningful.
+
+<!-- MONTHS:START -->
+| Month | Spend |
+|---|---:|
+| 2026-07 | $26.29 |
+| **All-time** | **$26.29** |
+<!-- MONTHS:END -->
+
+**API credit runway:** $100 funded − **$26.29** spent = **$73.71 remaining** ≈ 348 searches at the measured rate.
 The dedicated key's Cost column is TrialThread's exact all-time spend, so runway is always $100 minus that number. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
 
 ### The cleanest unit-cost measurement this project has
