@@ -70,7 +70,7 @@ Two honest caveats, because a single clean number invites over-reading:
 
 Worth separating from patient spend, because lumping them together would make both numbers lie:
 
-- **Patient searches** are the product working. Roughly 65 people have used it.
+- **Patient searches** are the product working. Roughly 100 people have used it.
 - **Audit searches** are the product being attacked on purpose, so it does not fail a real person later.
 
 That **$4.23** found a **Critical** defect: TrialThread was detecting suicidal ideation in a caregiver's message, writing *"suicidal ideation — urgent mental health support recommended"* into its own structured output, and then discarding the field and showing that person ten pancreatic trials and a note about RECIST criteria. It has been fixed.
