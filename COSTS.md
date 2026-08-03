@@ -39,11 +39,12 @@ its own month — which is what makes the sanity checks meaningful.
 <!-- MONTHS:START -->
 | Month | Spend |
 |---|---:|
-| 2026-07 | $32.01 |
-| **All-time** | **$32.01** |
+| 2026-07 | $32.93 |
+| 2026-08 | $0.27 |
+| **All-time** | **$33.20** |
 <!-- MONTHS:END -->
 
-**API credit runway:** $100 funded − **$32.01** spent = **$67.99 remaining** ≈ 321 searches at the measured rate. *(Auto-updated 2026-07-26.)*
+**API credit runway:** $100 funded − **$33.20** spent = **$66.80 remaining** ≈ 316 searches at the measured rate. *(Auto-updated 2026-08-03.)*
 The dedicated key's Cost column is TrialThread's exact all-time spend, so runway is always $100 minus that number. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
 
 ### The cleanest unit-cost measurement this project has
