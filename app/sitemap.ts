@@ -15,7 +15,10 @@ import type { MetadataRoute } from "next";
  */
 const LAST_MODIFIED = {
   home: new Date("2026-07-07"),
-  about: new Date("2026-07-04"),
+  // Bumped 2026-08-03: /about's canonical was pointing at the homepage, which
+  // kept it out of the index. The <head> genuinely changed, so this lastmod is
+  // a truthful recrawl signal — not a nudge. See app/about/page.tsx.
+  about: new Date("2026-08-03"),
   faq: new Date("2026-07-14"),
   privacy: new Date("2026-07-14"),
   security: new Date("2026-07-14"),

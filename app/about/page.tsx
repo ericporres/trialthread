@@ -6,6 +6,28 @@ export const metadata: Metadata = {
   title: "About — TrialThread",
   description:
     "Why TrialThread exists: closing the gap between publicly listed clinical trials and the people whose lives depend on finding them.",
+
+  // REGRESSION FIX (2026-08-03). This page was the ONE route that never
+  // overrode the root layout's canonical, so /about shipped
+  // <link rel="canonical" href="https://www.trialthread.org"> — telling Google
+  // "this page is a duplicate of the homepage, index that instead." The root
+  // layout comment claimed "child routes override this with their own
+  // canonical"; /faq, /privacy and /security did. /about did not.
+  //
+  // That is a self-inflicted de-index, and it is consistent with what Search
+  // Console reported: /about sitting in "Discovered - currently not indexed."
+  // A canonical pointing away from the page is the single most reliable way to
+  // keep a page out of the index while everything else looks healthy.
+  //
+  // Any new route added under app/ MUST set both of these. There is no
+  // inherited-canonical behaviour worth relying on.
+  alternates: { canonical: "https://www.trialthread.org/about" },
+  openGraph: {
+    title: "About TrialThread",
+    description:
+      "Why TrialThread exists: closing the gap between publicly listed clinical trials and the people whose lives depend on finding them.",
+    url: "https://www.trialthread.org/about",
+  },
 };
 
 export default function About() {
