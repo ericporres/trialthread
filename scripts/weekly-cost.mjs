@@ -143,13 +143,17 @@ ${rows}
 | **All-time** | **$${total.toFixed(2)}** |
 <!-- MONTHS:END -->`;
 
-let out = md.replace(TABLE_RE, newTable);
+// NOTE: both replacements pass a FUNCTION, not a string. A string replacement
+// treats `$1`, `$&`, `` $` `` etc. as substitution tokens — and these strings are
+// full of dollar amounts. A month total of `$1.18` would expand `$1` to
+// TABLE_RE's capture group (the entire old table) and silently shred the ledger.
+// --dry-run does not exercise this path, so the corruption only ever appears in
+// the real write. Function replacers disable token expansion entirely.
+let out = md.replace(TABLE_RE, () => newTable);
 
 // Refresh the runway line.
-out = out.replace(
-  /\*\*API credit runway:\*\*[^\n]*/,
-  `**API credit runway:** $${FUNDED.toFixed(0)} funded − **$${total.toFixed(2)}** spent = **$${runway.toFixed(2)} remaining** ≈ ${Math.round(runway / COST_PER_SEARCH)} searches at the measured rate. *(Auto-updated ${today}.)*`
-);
+const runwayLine = `**API credit runway:** $${FUNDED.toFixed(0)} funded − **$${total.toFixed(2)}** spent = **$${runway.toFixed(2)} remaining** ≈ ${Math.round(runway / COST_PER_SEARCH)} searches at the measured rate. *(Auto-updated ${today}.)*`;
+out = out.replace(/\*\*API credit runway:\*\*[^\n]*/, () => runwayLine);
 
 if (out === md) fail("COSTS.md was not modified — anchor patterns did not match. Format drift?");
 
