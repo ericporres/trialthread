@@ -64,6 +64,7 @@ export default function Home() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let sawTerminal = false; // did a results/error event arrive before the stream closed?
 
       while (true) {
         const { done, value } = await reader.read();
@@ -73,10 +74,24 @@ export default function Home() {
         buffer = lines.pop() ?? "";
         for (const line of lines) {
           if (!line.trim()) continue;
-          handleEvent(JSON.parse(line) as StreamEvent);
+          const ev = JSON.parse(line) as StreamEvent;
+          if (ev.type === "results" || ev.type === "error") sawTerminal = true;
+          handleEvent(ev);
         }
       }
-      setPhase((p) => (p === "running" ? "done" : p));
+      if (!sawTerminal) {
+        // The stream closed with no terminal event. On this app that means the
+        // serverless function hit its 300s maxDuration and Vercel killed it
+        // mid-search — the route's finally/catch never ran, so no error event
+        // reached us. Previously this fell through to "done" and the person was
+        // left staring at an empty non-result with no explanation. Say what happened.
+        setError(
+          "The search ran longer than expected and timed out before finishing. Please try again — and if it keeps happening, try describing the condition in a sentence or two rather than a full report."
+        );
+        setPhase("error");
+      } else {
+        setPhase((p) => (p === "running" ? "done" : p));
+      }
     } catch (e) {
       tt({ e: "search_error", stage: "client" });
       setError((e as Error).message);
