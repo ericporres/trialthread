@@ -150,14 +150,78 @@ async function incr(key: string, ttlSec: number): Promise<number | null> {
       signal: AbortSignal.timeout(1200),
       cache: "no-store",
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      degraded(`HTTP ${res.status}`);
+      return null;
+    }
     const data = (await res.json()) as Array<{ result?: unknown }>;
     const n = data?.[0]?.result;
+    if (typeof n !== "number") degraded("unexpected response shape");
     return typeof n === "number" ? n : null;
-  } catch {
+  } catch (e) {
     // Redis hiccup, timeout, DNS, anything. Fail OPEN. A patient must not be
     // turned away because a cache had a bad minute.
+    degraded(e instanceof Error ? e.name : "fetch failed");
     return null;
+  }
+}
+
+/**
+ * FAIL OPEN, BUT NOT SILENTLY (2026-10-18).
+ *
+ * Failing open is right for the patient and wrong for the operator if nobody
+ * hears about it. On 2026-10-18 Upstash sent an inactivity notice: the free-tier
+ * database had seen no traffic for weeks and would be ARCHIVED. Had it been,
+ * every INCR would have failed, every search would have been allowed, and the
+ * 80/day cap — the only bound that actually stops a drain — would have vanished
+ * with no error anywhere. "Protected but actually isn't," again.
+ *
+ * So: every degraded call logs one tagged error line (throttled to one per
+ * instance per minute so an outage doesn't become a log flood). The daily
+ * keep-alive cron (app/api/cron/keepalive) also FAILS when the store is
+ * unreachable, which shows up red in Vercel's Cron Jobs tab.
+ */
+let lastDegradedLog = 0;
+function degraded(why: string): void {
+  const now = Date.now();
+  if (now - lastDegradedLog < 60_000) return;
+  lastDegradedLog = now;
+  console.error(`tt_limiter DEGRADED — shared store unreachable (${why}); global ${GLOBAL_PER_DAY}/day cap NOT enforced`);
+}
+
+export type StoreHealth =
+  | { state: "ok"; ms: number }
+  | { state: "unconfigured" }
+  | { state: "unreachable"; why: string };
+
+/**
+ * Keep-alive + health probe for the shared store, called once a day by cron.
+ *
+ * WHY IT EXISTS: Upstash archives free-tier databases that see no traffic for a
+ * few weeks. TrialThread's only traffic to the store is a search, and searches
+ * are sparse — so a quiet fortnight would silently delete the drain bound. This
+ * writes one constant key so the database always has traffic.
+ *
+ * Same rule as the counter: NOTHING user-derived. The key is a fixed name and
+ * the value is a timestamp. It never sees a request, an IP, or a patient.
+ */
+export async function pingStore(): Promise<StoreHealth> {
+  if (!HAS_SHARED_STORE) return { state: "unconfigured" };
+  const t0 = Date.now();
+  try {
+    const res = await fetch(`${REDIS_URL}/pipeline`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${REDIS_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify([["SET", "tt:keepalive", new Date().toISOString(), "EX", String(14 * 24 * 60 * 60)]]),
+      signal: AbortSignal.timeout(5000),
+      cache: "no-store",
+    });
+    if (!res.ok) return { state: "unreachable", why: `HTTP ${res.status}` };
+    const data = (await res.json()) as Array<{ result?: unknown }>;
+    if (data?.[0]?.result !== "OK") return { state: "unreachable", why: "unexpected response" };
+    return { state: "ok", ms: Date.now() - t0 };
+  } catch (e) {
+    return { state: "unreachable", why: e instanceof Error ? e.name : "fetch failed" };
   }
 }
 
