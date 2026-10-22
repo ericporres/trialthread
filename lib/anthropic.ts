@@ -38,6 +38,7 @@ export function safeErr(e: unknown): string {
     /timeout|timed out|aborted/i,
     /fetch failed|ECONNRESET|ENOTFOUND|EAI_AGAIN|network/i,
     /^ANTHROPIC_API_KEY/,
+    /^output-truncated/, // content-free: the reply hit max_tokens (thinking + answer)
     /credit|billing/i,
   ];
   const hit = SAFE.find((p) => p.test(msg));
@@ -77,7 +78,8 @@ export async function askJson<T>(opts: {
     return await askJsonOnce<T>(opts);
   } catch (e) {
     if (!transient(e)) throw e;
-    console.error("tt_retry", safeErr(e));
+    // Model and cap are config, not content — they name which call ran out of room.
+    console.error("tt_retry", `${opts.model} max_tokens=${opts.maxTokens ?? 2000}`, safeErr(e));
     await new Promise((s) => setTimeout(s, 1500));
     // Truncated output re-fails at the same cap — retry with headroom.
     const truncated = e instanceof Error && e.message.startsWith("output-truncated");
