@@ -1,9 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 
 export const MODELS = {
-  extract: process.env.TT_EXTRACT_MODEL ?? "claude-sonnet-5",
+  extract: process.env.TT_EXTRACT_MODEL ?? "claude-sonnet-5-5",
   triage: process.env.TT_TRIAGE_MODEL ?? "claude-haiku-4-5-20251001",
-  deep: process.env.TT_DEEP_MODEL ?? "claude-sonnet-5",
+  deep: process.env.TT_DEEP_MODEL ?? "claude-sonnet-5-5",
 };
 
 export const MOCK = process.env.TRIALTHREAD_MOCK === "1";
