@@ -37,9 +37,24 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const COSTS = path.join(__dirname, "..", "COSTS.md");
 
-const COST_PER_SEARCH = 0.2115; // measured 2026-07-14 — see COSTS.md
+// ── UNIT COST CHANGED ON 2026-11-15 (deep parse moved to Opus 5.5) ─────────
+// Dollars spent before the cutover convert to searches at the old measured
+// rate; dollars after it at the new one. One blended rate would either
+// rewrite the first 126 searches or double-count every search from here on.
+const COST_PER_SEARCH = 0.43;          // since 2026-11-15. Token usage × list price on 6 clinical vignettes — NOT yet a Console-measured block. Replace it when one exists.
+const LEGACY_COST_PER_SEARCH = 0.2115; // measured 2026-07-14 — see COSTS.md
 const FUNDED = 100.0;
-const DEV_SPEND = 11.71;        // non-patient: build + evals + the 2026-07-14 audit
+const LEGACY_DEV_SPEND = 11.71;        // non-patient before the cutover: build + evals + the 2026-07-14 audit
+const CUTOVER_TOTAL = 38.39;           // all-time spend at the last Console read before the cutover
+const CUTOVER_EVAL = 13.8;             // the 2026-11-15 model-upgrade eval + release gate, spent right at the cutover.
+                                       // ESTIMATE ($9.37 from token usage + ≈$4.4 for the gate). Reconcile against the
+                                       // Console's November figure; every $0.43 of error here is one phantom or hidden search.
+const devSpendAt = (total) => LEGACY_DEV_SPEND + Math.min(CUTOVER_EVAL, Math.max(0, total - CUTOVER_TOTAL));
+const searchesFor = (total) =>
+  Math.round(
+    Math.max(0, Math.min(total, CUTOVER_TOTAL) - LEGACY_DEV_SPEND) / LEGACY_COST_PER_SEARCH +
+      Math.max(0, total - CUTOVER_TOTAL - CUTOVER_EVAL) / COST_PER_SEARCH
+  );
 
 const argv = process.argv.slice(2);
 const DRY = argv.includes("--dry-run");
@@ -107,14 +122,15 @@ for (const { month, amount } of sets) {
 // ── compute ────────────────────────────────────────────────────────────────
 const sorted = [...months.entries()].sort(([a], [b]) => a.localeCompare(b));
 const total = sorted.reduce((s, [, v]) => s + v, 0);
+const DEV_SPEND = devSpendAt(total);
 const organic = Math.max(0, total - DEV_SPEND);
-const searches = Math.round(organic / COST_PER_SEARCH);
+const searches = searchesFor(total);
 const runway = FUNDED - total;
 
 // what the totals were BEFORE this update, so we can report the weekly delta
 const priorTotal = [...tableMatch[1].matchAll(/^\|\s*\d{4}-\d{2}\s*\|\s*\$([\d.]+)\s*\|/gm)]
   .reduce((s, m) => s + parseFloat(m[1]), 0);
-const priorSearches = Math.round(Math.max(0, priorTotal - DEV_SPEND) / COST_PER_SEARCH);
+const priorSearches = searchesFor(priorTotal);
 const newSearches = searches - priorSearches;
 const spentThisWeek = total - priorTotal;
 

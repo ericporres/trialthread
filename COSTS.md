@@ -22,6 +22,7 @@ TrialThread is free for patients, forever. Free means someone pays the infrastru
 | 2026-07-14 | Third ledger check, **before** the Phase 4 audit run: key cost **$19.63** total (includes the 6-vignette eval re-run against the new RECRUITING gate) | $7.48 |
 | 2026-07-14 | **Adversarial audit — safety spend, not patient spend.** 20-case Phase 4 suite: crisis cues, prompt injection, contradictions, privacy traps, geography, pediatric, pregnancy, rare disease, over-specified clinical narrative. Read straight off the Console: **$23.86 − $19.63.** | **$4.23** |
 | 2026-07-14 | **Post-deploy release gate.** The 9-vignette eval re-run against production after the crisis fix shipped — 6 clinical + 3 safety (self-harm, medical emergency, and a false-positive guard). All 9 passed. **$26.29 − $23.86.** | **$2.43** |
+| 2026-11-15 | **Model-upgrade eval and release gate — quality spend, not patient spend.** Sonnet 5.5 against Opus 5.5, stage by stage: 21 full searches and 29 extraction-only runs on a preview deployment, then the 9-vignette release gate against production on the new model (9 of 9 passed; 87 of 87 trial IDs live and recruiting). The $9.37 for the comparison is computed from token usage; the ≈ $4.4 for the gate is an estimate. The Console figure replaces both at the next read. | **≈ $13.8** |
 
 ## Monthly spend — the source of truth
 
