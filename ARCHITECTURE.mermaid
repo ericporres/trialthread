@@ -17,7 +17,7 @@ flowchart TD
     TRI --> COV{≥5 strong\nor 3 passes?}
     COV -->|no| BR[Broaden ladder:\n1. geo 100→300mi→national\n2. parent condition terms\n3. biomarker basket hunt]
     BR --> LOOP
-    COV -->|yes| DEEP[Deep eligibility parse — Claude Sonnet\ntop 12, criteria-grounded:\nmatchPoints / concerns / questions]
+    COV -->|yes| DEEP[Deep eligibility parse — Claude Opus\ntop 10, criteria-grounded:\nmatchPoints / concerns / questions]
     DEEP --> RANK[Rank: verdict → triage score → distance]
     RANK -->|stream: results| UI
 

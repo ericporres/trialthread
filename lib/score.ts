@@ -114,7 +114,7 @@ Worked example 2 — patient: 55-year-old woman, relapsed ovarian cancer, BRCA-n
 
 Match that structure, tone, and honesty exactly.`;
 
-// Marked cacheable: this block now exceeds the 1024-token Sonnet caching minimum,
+// Marked cacheable: this block exceeds the prompt-caching minimum (verified on Opus 5.5, 2026-11-15),
 // so all deep calls in a search (and across searches within the 5-min TTL under
 // traffic) read it at 0.1x price instead of paying full input cost every call.
 const DEEP_SYSTEM_BLOCKS = [
@@ -152,7 +152,10 @@ FULL ELIGIBILITY CRITERIA:
 ${(t.eligibilityCriteria ?? "Not provided").slice(0, 9000)}
 
 Return the JSON now.`,
-        maxTokens: 2200,
+        // Opus 5.5 always thinks, and thinking counts toward max_tokens. Measured
+        // output on 56 calls: median 1,562, max 2,873 tokens. This is a ceiling,
+        // not a spend target — 2,200 would clip the long ones into a retry.
+        maxTokens: 8000,
       });
     } catch (e) {
       console.error("tt_search_error", "deep", safeErr(e));

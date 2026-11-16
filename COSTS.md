@@ -47,7 +47,7 @@ its own month — which is what makes the sanity checks meaningful.
 | **All-time** | **$38.39** |
 <!-- MONTHS:END -->
 
-**API credit runway:** $100 funded − **$38.39** spent = **$61.61 remaining** ≈ 291 searches at the measured rate. *(Auto-updated 2026-11-15.)*
+**API credit runway:** $100 funded − **$38.39** spent = **$61.61 remaining** at the last Console read, taken before the 2026-11-15 model-upgrade eval (see *Cash burned*). *(Auto-updated 2026-11-15; the next Sunday read restates this at the new unit cost.)*
 The dedicated key's Cost column is TrialThread's exact all-time spend, so runway is always $100 minus that number. Auto-reload is intentionally OFF — the balance is a hard spending ceiling, so a traffic spike degrades to a brief outage instead of a surprise bill.
 
 ### The cleanest unit-cost measurement this project has
@@ -85,7 +85,13 @@ The same $4.23 also **proved** the "real, *recruiting* trials" claim that had pr
 
 ## Unit economics
 
-A full search costs **≈ $0.19–0.25**: one Sonnet extraction (≈ $0.01), Haiku triage across every candidate (≈ $0.03–0.17 depending on how wide the loop broadens), and the dominant cost — Sonnet reading full eligibility criteria for the top candidates (≈ $0.13 after the July 4 caching + deep-pool pass; was ≈ $0.19). Measured baseline before optimization: $0.31/search across 9 production runs.
+A full search costs **≈ $0.25–0.60, about $0.43 on average**, since 2026-11-15: one Sonnet extraction (≈ $0.01), Haiku triage across every candidate (≈ $0.01–0.06), and the dominant cost — Opus reading full eligibility criteria for the top candidates (≈ $0.22–0.53). Before that date the deep parse ran on Sonnet and a search cost ≈ $0.19–0.25. The measurements further down this section are from that period and stay here as the record.
+
+**Why the unit cost doubled, on purpose (2026-11-15).** The deep parse is the part of TrialThread a patient actually reads, so it was tested head to head: six clinical vignettes, same deployment, Sonnet 5.5 against Opus 5.5. On the 34 trials both models analyzed, they gave the same verdict 27 times. On the other 7, Sonnet answered "uncertain" every time. Opus committed, and each call held up against the criteria text: six trials where the main inclusion criteria were met and no stated exclusion applied, and one where the trial requires a prior drug the patient had not received. On one vignette Sonnet labeled all ten results "uncertain," which leaves a patient no way to tell the strong candidates from the weak ones. Opus costs about $0.25 more per search. At autumn 2026 traffic the balance covers that for more than a year.
+
+The same test checked the other two stages and left them alone. Opus extraction produced the same profiles as Sonnet on 14 inputs. A stronger triage model changed the results mostly by triggering wider searches, which for one patient near New York put trials at sites in China at the top of the list. That is a search-loop problem, and it gets fixed before anyone pays for a stronger triage model.
+
+*Method note: the per-search figures in these three paragraphs are token usage × list price from a test harness on six vignettes, not a Console balance delta. The first clean Console block replaces them.*
 
 **Best measurement to date — $0.2115/search** (2026-07-14). The Phase 4 audit ran exactly 20 searches against production with nothing else touching the key, between two known Console balances ($19.63 → $23.86). That is a clean 20-search block with no attribution guesswork, and it puts the real number mid-range in the band above rather than at the ceiling.
 

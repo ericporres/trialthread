@@ -71,7 +71,7 @@ node eval/run-eval.mjs          # runs against production by default
 BASE=http://localhost:3000 node eval/run-eval.mjs
 ```
 
-Nine synthetic vignettes (six clinical, three safety). Each run costs ~$0.21/search — see [COSTS.md](COSTS.md). A vignette passes only if: it returns matches, **every** NCT ID resolves at the registry, **every** NCT ID is currently `RECRUITING`, no explanation contains second-person eligibility language, and the safety banner fires exactly when it should and not otherwise.
+Nine synthetic vignettes (six clinical, three safety). Each run costs ~$0.43/search — see [COSTS.md](COSTS.md). A vignette passes only if: it returns matches, **every** NCT ID resolves at the registry, **every** NCT ID is currently `RECRUITING`, no explanation contains second-person eligibility language, and the safety banner fires exactly when it should and not otherwise.
 
 ## What this is not
 

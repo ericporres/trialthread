@@ -1,4 +1,4 @@
-import { safeErr } from "@/lib/anthropic";
+import { MODELS, safeErr } from "@/lib/anthropic";
 import { extractProfile } from "@/lib/extract";
 import { runMatchLoop } from "@/lib/loop";
 import { checkLimits, acquire, release, limiterMode } from "@/lib/ratelimit";
@@ -11,9 +11,13 @@ export const dynamic = "force-dynamic";
 // between "we have a limiter" and "the limiter is durable" is visible in
 // production rather than only in a comment. See lib/ratelimit.ts.
 console.log("tt_limiter", limiterMode());
+// Which model serves each stage — config, not content. An env override
+// (TT_*_MODEL) silently beats the defaults in lib/anthropic.ts; this line is how
+// you tell which one production is really running.
+console.log("tt_models", `extract=${MODELS.extract} triage=${MODELS.triage} deep=${MODELS.deep}`);
 
 export async function POST(req: Request): Promise<Response> {
-  // Denial-of-wallet gate. Every search costs ~$0.21 against a hard-capped
+  // Denial-of-wallet gate. Every search costs ~$0.43 against a hard-capped
   // prepaid balance with auto-reload OFF — so a drain is not a surprise bill,
   // it is an OUTAGE, and the people who hit a dead site are cancer patients.
   const gate = await checkLimits(req);

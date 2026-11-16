@@ -33,7 +33,7 @@ Design principle: eligibility is a constraint-satisfaction problem, not a simila
 
 ## The economics, in public
 
-The running ledger is a public file (COSTS.md in the repo): total cash in the project at launch was $121.24 (two domains + API credits); a full search costs roughly $0.19–0.25 in inference; hosting is $0 (free tier); auto-reload on the API account is deliberately off so a traffic spike degrades to a brief outage rather than a surprise bill. One funding rail: GitHub Sponsors (github.com/sponsors/ericporres), zero platform fees, publicly visible. If sponsorship ever exceeds infrastructure costs, the surplus buys more free searches.
+The running ledger is a public file (COSTS.md in the repo): total cash in the project at launch was $121.24 (two domains + API credits); a full search costs roughly $0.25–0.60 in inference (about $0.43 on average since the eligibility analysis moved to a stronger model in November 2026; $0.19–0.25 before); hosting is $0 (free tier); auto-reload on the API account is deliberately off so a traffic spike degrades to a brief outage rather than a surprise bill. One funding rail: GitHub Sponsors (github.com/sponsors/ericporres), zero platform fees, publicly visible. If sponsorship ever exceeds infrastructure costs, the surplus buys more free searches.
 
 ## The project boundary
 

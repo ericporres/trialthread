@@ -26,9 +26,13 @@ export const metadata: Metadata = {
  *    by default; the exception is Covered Models, which require 30-day
  *    retention."
  *
- * The 30-day rule applies to Covered Models — Claude Fable 5 and Mythos 5.
- * TrialThread runs claude-sonnet-5-5 and claude-haiku-4-5 (lib/anthropic.ts:4-6).
- * Neither is a Covered Model. So the 30-day retention does NOT apply here.
+ * The 30-day rule applies to Covered Models — the Claude Fable and Mythos
+ * families (5, 5.1, 5.2 as of 2026-11-15, per the "Model-specific data retention
+ * requirements" section of platform.claude.com/docs/en/manage-claude/api-and-data-retention).
+ * TrialThread runs claude-sonnet-5-5, claude-haiku-4-5, and (since 2026-11-15,
+ * for the deep eligibility parse) claude-opus-5-5 — see MODELS in lib/anthropic.ts.
+ * None is a Covered Model. So the 30-day retention does NOT apply here.
+ * Re-read that list before changing any model: the list grows.
  *
  * Which means "nothing you type is stored" was essentially TRUE all along.
  * What was missing was never a retention problem — it was a DISCLOSURE

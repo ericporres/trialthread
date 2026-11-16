@@ -3,7 +3,10 @@ import Anthropic from "@anthropic-ai/sdk";
 export const MODELS = {
   extract: process.env.TT_EXTRACT_MODEL ?? "claude-sonnet-5-5",
   triage: process.env.TT_TRIAGE_MODEL ?? "claude-haiku-4-5-20251001",
-  deep: process.env.TT_DEEP_MODEL ?? "claude-sonnet-5-5",
+  // Opus 5.5 since 2026-11-15. On 34 paired trials it resolved the 7 verdicts
+  // where it and Sonnet 5.5 differed in line with the rubric below (Sonnet 5.5
+  // answered "uncertain" each time). Extract and triage were tested and left alone.
+  deep: process.env.TT_DEEP_MODEL ?? "claude-opus-5-5",
 };
 
 export const MOCK = process.env.TRIALTHREAD_MOCK === "1";

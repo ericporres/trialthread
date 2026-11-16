@@ -2,7 +2,8 @@
  * Denial-of-wallet defence.
  *
  * ── THE THREAT, STATED HONESTLY ────────────────────────────────────────────
- * Every search costs ~$0.21 of inference against a hard-capped prepaid balance.
+ * Every search costs ~$0.43 of inference against a hard-capped prepaid balance
+ * (was ~$0.21 before the deep parse moved to Opus 5.5 on 2026-11-15).
  * Auto-reload is deliberately OFF, so the failure mode is not a surprise bill —
  * it is an OUTAGE. Drain the balance and TrialThread is simply dead, and the
  * people who hit a dead site are cancer patients.
@@ -33,10 +34,14 @@
  * protection at all. The wallet is worth less than the person.
  *
  * ── WHAT THE GLOBAL CAP ACTUALLY BUYS ──────────────────────────────────────
- * GLOBAL_PER_DAY = 80. Real usage is ~7 searches/day (69 in 10 days), so this
- * is ~11x headroom for genuine growth. Under sustained attack the worst case is
- * 80 × $0.21 ≈ $16.80/day — meaning the current $73 runway survives 4+ days of
- * a determined drain instead of ~90 minutes.
+ * GLOBAL_PER_DAY = 40. It was 80 while a search cost ~$0.21; when the deep parse
+ * moved to Opus 5.5 (2026-11-15, ~$0.43/search) the cap was halved so the DOLLAR
+ * bound stayed where it was: 40 × $0.43 ≈ $17/day, against 80 × $0.21 ≈ $16.80
+ * before. On the ~$48 runway of that date, a determined drain takes close to
+ * three days instead of about a day and a half. Real usage in autumn 2026 is
+ * well under one search a day, so 40 is still far more than genuine traffic.
+ * If traffic ever approaches the cap, raise it deliberately — and do the
+ * runway arithmetic first.
  *
  * That is a BOUND, not immunity. It converts "TrialThread is dead by lunchtime"
  * into "TrialThread degrades slowly and somebody notices." For a 2.5-week
@@ -101,7 +106,7 @@ const HAS_SHARED_STORE = Boolean(REDIS_URL && REDIS_TOKEN);
 const PER_IP = { max: 3, windowSec: 5 * 60 };
 const PER_SUBNET = { max: 8, windowSec: 15 * 60 };
 const PER_INSTANCE = { max: 25, windowSec: 60 * 60 };
-const GLOBAL_PER_DAY = 80;         // durable; the real drain bound. ~11x current usage.
+const GLOBAL_PER_DAY = 40;         // durable; the real drain bound. Halved 2026-11-15 when unit cost doubled.
 const MAX_CONCURRENT = 5;
 
 type Hits = number[];
@@ -173,7 +178,7 @@ async function incr(key: string, ttlSec: number): Promise<number | null> {
  * hears about it. On 2026-10-18 Upstash sent an inactivity notice: the free-tier
  * database had seen no traffic for weeks and would be ARCHIVED. Had it been,
  * every INCR would have failed, every search would have been allowed, and the
- * 80/day cap — the only bound that actually stops a drain — would have vanished
+ * global daily cap — the only bound that actually stops a drain — would have vanished
  * with no error anywhere. "Protected but actually isn't," again.
  *
  * So: every degraded call logs one tagged error line (throttled to one per
